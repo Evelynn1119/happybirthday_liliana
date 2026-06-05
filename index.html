@@ -402,7 +402,7 @@ windBtn.addEventListener('touchstart', e => { e.preventDefault(); startWinding()
 window.addEventListener('touchend', stopWinding);
 window.addEventListener('touchcancel', stopWinding);
 
-// ── canvas white-key chroma removal ──
+// ── canvas green-screen chroma removal ──
 (function() {
   const video  = document.getElementById('dollVideo');
   const canvas = document.getElementById('dollCanvas');
@@ -419,11 +419,14 @@ window.addEventListener('touchcancel', stopWinding);
     const d = img.data;
     for (let i = 0; i < d.length; i += 4) {
       const r = d[i], g = d[i+1], b = d[i+2];
-      const lo = Math.min(r,g,b), hi = Math.max(r,g,b);
-      if (lo > 235 && hi - lo < 20) {
-        d[i+3] = 0;
-      } else if (lo > 218 && hi - lo < 25) {
-        d[i+3] = Math.round(255 * (lo - 218) / 17);
+      // green screen: green channel dominates over red and blue
+      const isGreen = g > 80 && g > r * 1.4 && g > b * 1.4;
+      if (isGreen) {
+        d[i+3] = 0; // fully transparent
+      } else {
+        // soft feather at green edges
+        const greenness = Math.max(0, (g - Math.max(r, b)) - 30);
+        if (greenness > 0) d[i+3] = Math.max(0, 255 - greenness * 5);
       }
     }
     ctx.putImageData(img, 0, 0);
