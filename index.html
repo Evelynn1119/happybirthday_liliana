@@ -156,71 +156,20 @@
     border-radius: 4px;
   }
 
-  /* ── turntable platform: positioned over the round pad inside the box ── */
-  .platform {
+  /* ── doll video: sits on the pad inside the music box ── */
+  .doll-video-wrap {
     position: absolute;
-    left: var(--pf-left, 50%);
-    bottom: var(--pf-bottom, 33%);
-    width: var(--pf-w, 30%);
-    transform: translateX(-50%);
-    perspective: 900px;            /* gives the 3D turn real depth */
-  }
-
-  /* contact shadow ellipse on the platform (static) */
-  .platform .contact-shadow {
-    position: absolute;
-    bottom: -4%;
     left: 50%;
-    width: 76%;
-    height: 14%;
+    bottom: 36%;
+    width: 46%;
     transform: translateX(-50%);
-    border-radius: 50%;
-    background: radial-gradient(ellipse at 50% 50%, rgba(60,30,10,0.45) 0%, rgba(60,30,10,0.15) 55%, transparent 75%);
-    filter: blur(2px);
-    z-index: 1;
-  }
-
-  /* the rotating element — two faces pivot around the vertical axis */
-  .spinner {
-    position: relative;
-    width: 100%;
-    transform-style: preserve-3d;
-    transform-origin: 50% 100%;   /* pivot at the feet */
     z-index: 2;
+    pointer-events: none;
   }
-  .spinner.spinning {
-    animation: doll-spin 7s linear infinite;
-  }
-  @keyframes doll-spin {
-    from { transform: rotateY(0deg); }
-    to   { transform: rotateY(360deg); }
-  }
-
-  /* each face is a flat billboard; backface hidden so only the
-     side currently facing us shows — front for 0–90/270–360, back for 90–270 */
-  .face {
-    width: 100%;
-    display: block;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-  }
-  .face img {
-    width: 100%;
-    display: block;
-    filter: drop-shadow(0 5px 10px rgba(80,40,10,0.3));
-  }
-  /* front face defines height */
-  .face.front { position: relative; transform: rotateY(0deg); }
-  /* back face overlaps, flipped + shadowed to read as the figurine's back */
-  .face.back {
-    position: absolute;
-    top: 0; left: 0;
-    transform: rotateY(180deg);
-  }
-  .face.back img {
-    transform: scaleX(-1);
-    filter: brightness(0.42) saturate(0.65) drop-shadow(0 5px 10px rgba(80,40,10,0.3));
-  }
+  /* hidden source video */
+  .doll-video-wrap video { display: none; }
+  /* canvas shows the keyed result */
+  .doll-video-wrap canvas { width: 100%; display: block; }
 
   /* ── invisible winding key hit area ── */
   /* covers the key on the right side of the box */
@@ -307,7 +256,6 @@
   }
   .doll-stage-3d canvas { display: block; width: 100%; height: 100%; }
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
 <div class="bg"></div>
@@ -333,8 +281,11 @@
   <div class="box-stage">
     <img class="box-img" id="boxImg" src="/image/musicbox(blank).png" alt="music box"/>
 
-    <!-- real 3D porcelain figures on a rotating turntable -->
-    <div class="doll-stage-3d" id="dollStage"></div>
+    <!-- doll video — black bg removed via canvas chroma key -->
+    <div class="doll-video-wrap">
+      <video id="dollVideo" src="/video.mp4" loop muted playsinline preload="auto" crossorigin="anonymous"></video>
+      <canvas id="dollCanvas"></canvas>
+    </div>
 
     <!-- invisible hit area over the winding key -->
     <div class="key-hit-area" id="windBtn"></div>
@@ -459,9 +410,7 @@ const windBtn    = document.getElementById('windBtn');
 const windHint   = document.getElementById('windHint');
 const waveDots   = document.getElementById('waveDots');
 const endedMsg   = document.getElementById('endedMsg');
-
-// shared flag the 3D render loop reads
-window.__spinning3D = false;
+const dollVideo  = document.getElementById('dollVideo');
 
 // boot with baked audio
 if (window.__AUDIO_B64__) {
@@ -475,8 +424,8 @@ function startWinding() {
   endedMsg.classList.remove('show');
   if (audioEl.ended) audioEl.currentTime = 0;
   audioEl.play();
+  if (dollVideo) dollVideo.play();
   isPlaying = true;
-  window.__spinning3D = true;
   waveDots.classList.add('show');
   windBtn.classList.add('active');
 }
@@ -484,8 +433,8 @@ function startWinding() {
 function stopWinding() {
   if (!audioEl || !isPlaying) return;
   audioEl.pause();
+  if (dollVideo) dollVideo.pause();
   isPlaying = false;
-  window.__spinning3D = false;
   waveDots.classList.remove('show');
   windBtn.classList.remove('active');
   windHint.classList.remove('hide');
@@ -493,7 +442,7 @@ function stopWinding() {
 
 function onEnded() {
   isPlaying = false;
-  window.__spinning3D = false;
+  if (dollVideo) { dollVideo.pause(); dollVideo.currentTime = 0; }
   waveDots.classList.remove('show');
   windBtn.classList.remove('active');
   windHint.classList.add('hide');
@@ -505,6 +454,50 @@ window.addEventListener('mouseup', () => stopWinding());
 windBtn.addEventListener('touchstart', e => { e.preventDefault(); startWinding(); }, { passive: false });
 window.addEventListener('touchend', () => stopWinding());
 window.addEventListener('touchcancel', () => stopWinding());
+
+// ── canvas chroma key: removes black background from video ──
+(function() {
+  const video  = document.getElementById('dollVideo');
+  const canvas = document.getElementById('dollCanvas');
+  if (!video || !canvas) return;
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+
+  function keyFrame() {
+    if (video.paused && video.currentTime === 0) { requestAnimationFrame(keyFrame); return; }
+    if (video.readyState < 2) { requestAnimationFrame(keyFrame); return; }
+
+    const w = video.videoWidth, h = video.videoHeight;
+    if (w === 0) { requestAnimationFrame(keyFrame); return; }
+
+    if (canvas.width !== w) { canvas.width = w; canvas.height = h; }
+
+    ctx.drawImage(video, 0, 0, w, h);
+    const img = ctx.getImageData(0, 0, w, h);
+    const d   = img.data;
+    const threshold = 40; // pixel brightness below this → transparent
+
+    for (let i = 0; i < d.length; i += 4) {
+      const r = d[i], g = d[i+1], b = d[i+2];
+      const brightness = (r + g + b) / 3;
+      if (brightness < threshold) {
+        d[i+3] = 0; // fully transparent
+      } else if (brightness < threshold * 2.5) {
+        // soft feather at the edge
+        d[i+3] = Math.round(255 * (brightness - threshold) / (threshold * 1.5));
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+    requestAnimationFrame(keyFrame);
+  }
+
+  video.addEventListener('loadeddata', () => {
+    canvas.width  = video.videoWidth;
+    canvas.height = video.videoHeight;
+    requestAnimationFrame(keyFrame);
+  });
+  // also kick off if already loaded
+  if (video.readyState >= 2) requestAnimationFrame(keyFrame);
+})();
 
 // ════ build self-contained player HTML ════
 function buildPlayerHTML(audiob64, musicboxSrc, dollSrc) {
