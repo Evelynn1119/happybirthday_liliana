@@ -73,6 +73,20 @@
     right: 0%; top: 48%;
     width: 16%; height: 20%;
     cursor: pointer; border-radius: 50%; z-index: 5;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    touch-action: none;
+  }
+  /* prevent long-press save dialog on the box image */
+  .box-img {
+    -webkit-touch-callout: none;
+    pointer-events: none;
+  }
+  .box-stage {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
   }
   .key-hit-area.active::after {
     content: '';
@@ -341,7 +355,6 @@ function startWinding() {
   if (audioEl.ended) { audioEl.currentTime = 0; lastCueIdx = -1; subtitleEl.classList.remove('show'); }
   audioEl.play();
   dollVideo.play();
-  startBgMusic();
   isPlaying = true;
   waveDots.classList.add('show');
   windBtn.classList.add('active');
@@ -370,98 +383,6 @@ function onEnded() {
   setTimeout(() => emailForm.classList.add('show'), 800);
 }
 
-// ── background music box (Web Audio API — Happy Birthday melody) ──
-let bgCtx = null, bgMasterGain = null, bgScheduled = false, bgNextTime = 0;
-
-// G major notes in Hz
-const NOTE = { G4:392.00, A4:440.00, B4:493.88, C5:523.25, D5:587.33, E5:659.25, F5:698.46, G5:783.99 };
-const BPM  = 76;
-const BEAT = 60 / BPM;
-
-// Happy Birthday melody: [note, beats]
-const MELODY = [
-  ['G4',.75],['G4',.25],['A4',1],['G4',1],['C5',1],['B4',2],[null,.5],
-  ['G4',.75],['G4',.25],['A4',1],['G4',1],['D5',1],['C5',2],[null,.5],
-  ['G4',.75],['G4',.25],['G5',1],['E5',1],['C5',1],['B4',1],['A4',2],[null,.5],
-  ['F5',.75],['F5',.25],['E5',1],['C5',1],['D5',1],['C5',3],[null,1],
-];
-
-function initBgMusic() {
-  if (bgCtx) return;
-  bgCtx = new (window.AudioContext || window.webkitAudioContext)();
-  bgMasterGain = bgCtx.createGain();
-  bgMasterGain.gain.value = 0;
-  bgMasterGain.connect(bgCtx.destination);
-}
-
-function playNote(freq, startTime, duration) {
-  const osc  = bgCtx.createOscillator();
-  const env  = bgCtx.createGain();
-  // slight detune for warmth
-  const osc2 = bgCtx.createOscillator();
-  const env2 = bgCtx.createGain();
-
-  osc.type  = 'sine'; osc.frequency.value  = freq;
-  osc2.type = 'sine'; osc2.frequency.value = freq * 2; // octave shimmer
-
-  [env, env2].forEach((e, idx) => {
-    const g = idx === 0 ? 0.55 : 0.12;
-    e.gain.setValueAtTime(0, startTime);
-    e.gain.linearRampToValueAtTime(g, startTime + 0.012);
-    e.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
-    e.connect(bgMasterGain);
-  });
-  osc.connect(env);   osc.start(startTime);  osc.stop(startTime + duration + 0.05);
-  osc2.connect(env2); osc2.start(startTime); osc2.stop(startTime + duration + 0.05);
-}
-
-function scheduleMelody(startTime) {
-  let t = startTime;
-  for (const [name, beats] of MELODY) {
-    const dur = beats * BEAT;
-    if (name) playNote(NOTE[name], t, dur * 0.82);
-    t += dur;
-  }
-  return t; // when melody ends
-}
-
-function bgMusicTick() {
-  if (!bgScheduled) return;
-  const lookahead = 0.4;
-  if (bgNextTime < bgCtx.currentTime + lookahead) {
-    bgNextTime = scheduleMelody(Math.max(bgNextTime, bgCtx.currentTime + 0.05));
-  }
-  setTimeout(bgMusicTick, 150);
-}
-
-function bgMusicFade(on) {
-  if (!bgCtx) return;
-  const now = bgCtx.currentTime;
-  bgMasterGain.gain.cancelScheduledValues(now);
-  if (on) {
-    bgMasterGain.gain.setValueAtTime(bgMasterGain.gain.value, now);
-    bgMasterGain.gain.linearRampToValueAtTime(0.13, now + 1.5); // quiet under voice
-  } else {
-    bgMasterGain.gain.setValueAtTime(bgMasterGain.gain.value, now);
-    bgMasterGain.gain.linearRampToValueAtTime(0, now + 1.2);
-  }
-}
-
-function startBgMusic() {
-  initBgMusic();
-  if (bgCtx.state === 'suspended') bgCtx.resume();
-  if (!bgScheduled) {
-    bgScheduled = true;
-    bgNextTime = bgCtx.currentTime + 0.1;
-    bgMusicTick();
-  }
-  bgMusicFade(true);
-}
-
-function stopBgMusic() {
-  bgScheduled = false;
-  bgMusicFade(false);
-}
 
 // ── email send ──
 emailSendBtn.addEventListener('click', async () => {
@@ -493,9 +414,12 @@ emailSendBtn.addEventListener('click', async () => {
 
 windBtn.addEventListener('mousedown', e => { e.preventDefault(); startWinding(); });
 window.addEventListener('mouseup', stopWinding);
-windBtn.addEventListener('touchstart', e => { e.preventDefault(); startWinding(); }, { passive: false });
+windBtn.addEventListener('touchstart', e => { e.preventDefault(); e.stopPropagation(); startWinding(); }, { passive: false });
 window.addEventListener('touchend', stopWinding);
 window.addEventListener('touchcancel', stopWinding);
+// block long-press "save image" dialog on the whole stage
+document.querySelector('.box-stage').addEventListener('contextmenu', e => e.preventDefault());
+document.querySelector('.key-hit-area').addEventListener('contextmenu', e => e.preventDefault());
 
 // ── canvas green-screen chroma removal ──
 (function() {
