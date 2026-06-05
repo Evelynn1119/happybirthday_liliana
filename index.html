@@ -364,7 +364,6 @@ function stopWinding() {
   if (!isPlaying) return;
   audioEl.pause();
   dollVideo.pause();
-  stopBgMusic();
   isPlaying = false;
   waveDots.classList.remove('show');
   windBtn.classList.remove('active');
@@ -379,7 +378,6 @@ function onEnded() {
   windHint.classList.add('hide');
   endedMsg.classList.add('show');
   subtitleEl.classList.remove('show');
-  bgMusicFade(false);
   setTimeout(() => emailForm.classList.add('show'), 800);
 }
 
