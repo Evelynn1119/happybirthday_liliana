@@ -110,49 +110,31 @@
   }
   @keyframes wavebar { from { height: 3px; } to { height: var(--h, 14px); } }
 
-  /* ── letter / caption area ── */
-  .letter-wrap {
-    flex: 1;
+  /* ── subtitle display — shows only current line ── */
+  .subtitle-box {
     width: min(360px, 88vw);
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    padding: 8px 4px 40px;
+    min-height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 12px;
     position: relative; z-index: 10;
-    /* hide scrollbar */
-    scrollbar-width: none;
+    flex-shrink: 0;
   }
-  .letter-wrap::-webkit-scrollbar { display: none; }
-
-  .letter-line {
+  .subtitle-text {
     font-family: 'Playfair Display', serif;
     font-style: italic;
-    font-size: 15px;
-    line-height: 1.75;
-    color: #4a2e1a;
+    font-size: 17px;
+    line-height: 1.6;
+    color: #3a2010;
     text-align: center;
-    margin-bottom: 10px;
     opacity: 0;
-    transform: translateY(8px);
-    transition: opacity 0.7s ease, transform 0.7s ease;
+    transform: translateY(6px);
+    transition: opacity 0.45s ease, transform 0.45s ease;
   }
-  .letter-line.visible {
+  .subtitle-text.show {
     opacity: 1;
     transform: translateY(0);
-  }
-  .letter-line.current {
-    color: #2a1208;
-    font-size: 16px;
-  }
-  .letter-line.dear {
-    font-size: 20px;
-    color: #6a3a18;
-    margin-bottom: 14px;
-    letter-spacing: 0.5px;
-  }
-  .letter-line.closing {
-    margin-top: 8px;
-    color: #6a3a18;
-    font-size: 16px;
   }
 
   /* ended replay */
@@ -189,56 +171,54 @@
 </div>
 <div class="ended-msg" id="endedMsg">wind again to replay ↺</div>
 
-<!-- letter captions -->
-<div class="letter-wrap" id="letterWrap">
-  <!-- lines injected by JS -->
+<!-- subtitle display -->
+<div class="subtitle-box">
+  <div class="subtitle-text" id="subtitleText"></div>
 </div>
 
 <script>
-// ── caption cues (time in seconds, estimated from ~76s total audio) ──
-// Adjust the `t` values if the timing is off
+// ── caption cues — transcribed by Whisper from the actual voice note ──
 const CUES = [
-  { t: 0,    text: "Dear Liliana,",                                                                    cls: "dear" },
-  { t: 2,    text: "It's really, really nice to be your best friend." },
-  { t: 7,    text: "First of all, I miss you so much." },
-  { t: 11,   text: "I can't believe how fast time has passed." },
-  { t: 15,   text: "I still remember the first day I met you outside the bathroom," },
-  { t: 19,   text: "and honestly, I really do consider you one of my best friends." },
-  { t: 24,   text: "I know long-distance friendships can be hard," },
-  { t: 28,   text: "but I hope you always know that I'll be here for you." },
-  { t: 33,   text: "No matter where we are or how much time passes," },
-  { t: 36,   text: "I'll always be cheering for you." },
-  { t: 39,   text: "I just want to say that I really, really love you," },
-  { t: 43,   text: "and I truly cherish you as a friend." },
-  { t: 46,   text: "You make my life ten times better," },
-  { t: 49,   text: "and I honestly can't imagine my life without you." },
-  { t: 53,   text: "When I was in New York, and even now," },
-  { t: 56,   text: "you've always been one of my closest friends." },
-  { t: 60,   text: "I want you to be at my wedding." },
-  { t: 63,   text: "I want you to be one of my bridesmaids." },
-  { t: 66,   text: "I want you to be part of every important chapter in my life." },
-  { t: 71,   text: "I'm getting emotional saying this, but I just really miss you." },
-  { t: 76,   text: "You are such a caring, loyal, and strong person." },
-  { t: 80,   text: "You always show up for the people you love," },
-  { t: 83,   text: "and I adore that about you so much." },
-  { t: 87,   text: "I'm so proud of you —" },
-  { t: 89,   text: "for buying a house, building your life, and becoming the person you are." },
-  { t: 95,   text: "Please never stop updating me on your crazy stories and your life in New York" },
-  { t: 100,  text: "because it always makes me feel closer to you." },
-  { t: 105,  text: "Happy birthday, my love.",                                                         cls: "closing" },
-  { t: 108,  text: "I love you so much,",                                                             cls: "closing" },
-  { t: 111,  text: "and I wish you the best year ahead. 🎀",                                          cls: "closing" },
+  { t: 0.0,   text: "Dear Liliana," },
+  { t: 2.2,   text: "it's really really nice to be your friend." },
+  { t: 4.2,   text: "First of all, I miss you so so much." },
+  { t: 5.8,   text: "I can't believe how fast time has passed." },
+  { t: 8.5,   text: "I still remember the first day I met you outside the bathroom," },
+  { t: 11.0,  text: "and honestly, I really do consider you one of my best friend and sister." },
+  { t: 17.5,  text: "I know long-distance friendships can be hard," },
+  { t: 20.2,  text: "but I hope you always know that I'll be here for you," },
+  { t: 23.4,  text: "no matter where we are or how much time passed." },
+  { t: 27.1,  text: "I'll always be cheering for you and rooting for you." },
+  { t: 30.5,  text: "And I just want to say that I really really love you" },
+  { t: 33.8,  text: "and I truly cherish you as a friend and more —" },
+  { t: 36.5,  text: "maybe like a family member even." },
+  { t: 39.3,  text: "You make my life ten times better" },
+  { t: 41.5,  text: "and I honestly can't imagine my life without you." },
+  { t: 45.0,  text: "When I was in New York, and even now," },
+  { t: 47.5,  text: "you've always been one of my closest friends" },
+  { t: 49.5,  text: "and the one that's always been on my side." },
+  { t: 51.2,  text: "I want you to be at my wedding." },
+  { t: 53.2,  text: "I want you to be one of my bridesmaid." },
+  { t: 55.4,  text: "I want you to be part of every important chapter in my life." },
+  { t: 58.8,  text: "I'm getting emotional just saying this," },
+  { t: 61.0,  text: "but I just really miss you." },
+  { t: 63.0,  text: "You're such a caring, loyal person," },
+  { t: 66.1,  text: "and also really really strong." },
+  { t: 67.9,  text: "You always show up for the people you love and support," },
+  { t: 71.0,  text: "and I adore that about you so so much." },
+  { t: 73.9,  text: "I'm so proud of you for buying the house," },
+  { t: 76.5,  text: "building your life in New York" },
+  { t: 78.5,  text: "and becoming the person you always wanted to be." },
+  { t: 82.9,  text: "Please never stop updating me on your crazy stories" },
+  { t: 87.5,  text: "and your life in New York," },
+  { t: 92.8,  text: "because it always makes me feel like I'm closer to you." },
+  { t: 97.5,  text: "Happy birthday, Liliana." },
+  { t: 99.5,  text: "I love you so much" },
+  { t: 100.6, text: "and I wish you the best year ahead. 🎀" },
 ];
 
-// ── build letter DOM ──
-const wrap = document.getElementById('letterWrap');
-CUES.forEach((cue, i) => {
-  const el = document.createElement('div');
-  el.className = 'letter-line' + (cue.cls ? ' ' + cue.cls : '');
-  el.id = 'cue-' + i;
-  el.textContent = cue.text;
-  wrap.appendChild(el);
-});
+// ── subtitle element ──
+const subtitleEl = document.getElementById('subtitleText');
 
 // ── audio ──
 const AUDIO_SRC = '/voicenote.m4a';
@@ -252,7 +232,7 @@ const endedMsg  = document.getElementById('endedMsg');
 let isPlaying = false;
 let lastCueIdx = -1;
 
-// ── timeupdate → show captions ──
+// ── timeupdate → subtitle display ──
 audioEl.addEventListener('timeupdate', () => {
   const t = audioEl.currentTime;
   let cur = -1;
@@ -262,22 +242,14 @@ audioEl.addEventListener('timeupdate', () => {
   if (cur === lastCueIdx) return;
   lastCueIdx = cur;
 
-  // reveal all lines up to current
-  for (let i = 0; i <= cur; i++) {
-    const el = document.getElementById('cue-' + i);
-    if (!el) continue;
-    el.classList.add('visible');
-    el.classList.toggle('current', i === cur);
-  }
-  // remove current from previous
-  if (cur > 0) {
-    const prev = document.getElementById('cue-' + (cur - 1));
-    if (prev) prev.classList.remove('current');
-  }
+  if (cur < 0) { subtitleEl.classList.remove('show'); return; }
 
-  // auto-scroll current line into view
-  const curEl = document.getElementById('cue-' + cur);
-  if (curEl) curEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  // fade out → swap text → fade in
+  subtitleEl.classList.remove('show');
+  setTimeout(() => {
+    subtitleEl.textContent = CUES[cur].text;
+    subtitleEl.classList.add('show');
+  }, 200);
 });
 
 audioEl.addEventListener('ended', onEnded);
@@ -285,7 +257,7 @@ audioEl.addEventListener('ended', onEnded);
 function startWinding() {
   windHint.classList.add('hide');
   endedMsg.classList.remove('show');
-  if (audioEl.ended) { audioEl.currentTime = 0; lastCueIdx = -1; }
+  if (audioEl.ended) { audioEl.currentTime = 0; lastCueIdx = -1; subtitleEl.classList.remove('show'); }
   audioEl.play();
   dollVideo.play();
   isPlaying = true;
