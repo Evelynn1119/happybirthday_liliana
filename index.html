@@ -293,7 +293,21 @@
     text-align: center;
   }
   .ended-msg.show { opacity: 1; }
+
+  /* ── 3D doll stage (Three.js canvas) sits over the pad inside the box ── */
+  .doll-stage-3d {
+    position: absolute;
+    left: var(--ds-left, 49%);
+    bottom: var(--ds-bottom, 35%);
+    width: var(--ds-w, 54%);
+    height: var(--ds-h, 56%);
+    transform: translateX(-50%);
+    z-index: 2;
+    pointer-events: none;     /* clicks pass through to the box / key */
+  }
+  .doll-stage-3d canvas { display: block; width: 100%; height: 100%; }
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
 <div class="bg"></div>
@@ -319,14 +333,8 @@
   <div class="box-stage">
     <img class="box-img" id="boxImg" src="/image/musicbox(blank).png" alt="music box"/>
 
-    <!-- doll on rotating turntable (two-faced 3D billboard) -->
-    <div class="platform">
-      <div class="contact-shadow"></div>
-      <div class="spinner" id="turntable">
-        <div class="face front"><img class="doll-src" src="/image/dolls_1.png" alt=""/></div>
-        <div class="face back"><img class="doll-src" src="/image/dolls_1.png" alt=""/></div>
-      </div>
-    </div>
+    <!-- real 3D porcelain figures on a rotating turntable -->
+    <div class="doll-stage-3d" id="dollStage"></div>
 
     <!-- invisible hit area over the winding key -->
     <div class="key-hit-area" id="windBtn"></div>
@@ -447,11 +455,13 @@ doneBtn.addEventListener('click', () => {
 });
 
 // ════ player controls ════
-const turntable  = document.getElementById('turntable');
 const windBtn    = document.getElementById('windBtn');
 const windHint   = document.getElementById('windHint');
 const waveDots   = document.getElementById('waveDots');
 const endedMsg   = document.getElementById('endedMsg');
+
+// shared flag the 3D render loop reads
+window.__spinning3D = false;
 
 // boot with baked audio
 if (window.__AUDIO_B64__) {
@@ -466,7 +476,7 @@ function startWinding() {
   if (audioEl.ended) audioEl.currentTime = 0;
   audioEl.play();
   isPlaying = true;
-  turntable.classList.add('spinning');
+  window.__spinning3D = true;
   waveDots.classList.add('show');
   windBtn.classList.add('active');
 }
@@ -475,7 +485,7 @@ function stopWinding() {
   if (!audioEl || !isPlaying) return;
   audioEl.pause();
   isPlaying = false;
-  turntable.classList.remove('spinning');
+  window.__spinning3D = false;
   waveDots.classList.remove('show');
   windBtn.classList.remove('active');
   windHint.classList.remove('hide');
@@ -483,7 +493,7 @@ function stopWinding() {
 
 function onEnded() {
   isPlaying = false;
-  turntable.classList.remove('spinning');
+  window.__spinning3D = false;
   waveDots.classList.remove('show');
   windBtn.classList.remove('active');
   windHint.classList.add('hide');
@@ -629,6 +639,203 @@ window.addEventListener('touchcancel', stopWinding);
 </body>
 </html>`;
 }
+</script>
+
+<!-- ════════════════ 3D PORCELAIN FIGURES (Three.js) ════════════════ -->
+<script>
+(function(){
+  if (!window.THREE) { console.warn('Three.js not loaded'); return; }
+  const mount = document.getElementById('dollStage');
+  if (!mount) return;
+
+  const scene = new THREE.Scene();
+
+  // ── camera ──
+  const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 100);
+  camera.position.set(0, 1.95, 6.4);
+  camera.lookAt(0, 1.35, 0);
+
+  // ── renderer (transparent, composites over the box photo) ──
+  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+  renderer.setClearColor(0x000000, 0);
+  renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+  mount.appendChild(renderer.domElement);
+
+  // ── soft warm studio lighting for porcelain glaze ──
+  scene.add(new THREE.HemisphereLight(0xfff6e8, 0xcdb49a, 0.5));
+  const key = new THREE.DirectionalLight(0xfff2e0, 0.7);
+  key.position.set(3.5, 5, 4); scene.add(key);
+  const fill = new THREE.DirectionalLight(0xffe9d2, 0.3);
+  fill.position.set(-4, 2.5, 2.5); scene.add(fill);
+  const rim = new THREE.DirectionalLight(0xffffff, 0.45);
+  rim.position.set(-2.5, 3.5, -4); scene.add(rim);
+
+  // ── porcelain glaze material helper ──
+  function glaze(color, extra) {
+    return new THREE.MeshPhysicalMaterial(Object.assign({
+      color: color, roughness: 0.4, metalness: 0.0,
+      clearcoat: 0.85, clearcoatRoughness: 0.22, reflectivity: 0.4
+    }, extra || {}));
+  }
+
+  // palette
+  const C = {
+    skin: 0xeed3ba, hairBrown: 0x5e3d28, hairBlonde: 0xcea05c,
+    cami: 0xe6d8be, cardigan: 0x8ea6cf, topBlack: 0x20202a,
+    pants: 0xd8c9ab, jeans: 0x7e98c4, shoe: 0xeae2d4,
+    hat: 0xece0cc, bag: 0xd9c9ad, lip: 0xc07e72, cheek: 0xe39a8a, eye: 0x2e231c
+  };
+
+  // small builders
+  function cyl(mat, rT, rB, h, x, y, z, rz, openTheta) {
+    const g = openTheta
+      ? new THREE.CylinderGeometry(rT, rB, h, 24, 1, true, openTheta[0], openTheta[1])
+      : new THREE.CylinderGeometry(rT, rB, h, 24);
+    const m = new THREE.Mesh(g, mat);
+    m.position.set(x, y, z); if (rz) m.rotation.z = rz;
+    return m;
+  }
+  function ball(mat, r, x, y, z, sx, sy, sz) {
+    const m = new THREE.Mesh(new THREE.SphereGeometry(r, 24, 20), mat);
+    m.position.set(x, y, z);
+    if (sx!==undefined) m.scale.set(sx, sy, sz);
+    return m;
+  }
+  function box(mat, w, h, d, x, y, z) {
+    const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
+    m.position.set(x, y, z); return m;
+  }
+
+  // ── build one girl ──
+  function makeGirl(cfg) {
+    const G = new THREE.Group();
+    const skin = glaze(C.skin, { clearcoatRoughness: 0.3 });
+    const hairMat = glaze(cfg.hair, { roughness: 0.5, clearcoat: 0.5 });
+    const topMat = glaze(cfg.top);
+    const jacketMat = glaze(cfg.jacket);
+    const pantsMat = glaze(cfg.pants);
+    const shoeMat = glaze(C.shoe);
+
+    // shoes
+    G.add(box(shoeMat, 0.18, 0.09, 0.30, -0.12, 0.05, 0.03));
+    G.add(box(shoeMat, 0.18, 0.09, 0.30,  0.12, 0.05, 0.03));
+    // legs (wide-leg flare)
+    G.add(cyl(pantsMat, 0.12, 0.17, 0.95, -0.12, 0.57, 0));
+    G.add(cyl(pantsMat, 0.12, 0.17, 0.95,  0.12, 0.57, 0));
+    // hips
+    G.add(cyl(pantsMat, 0.18, 0.16, 0.20, 0, 1.07, 0));
+    // torso (top/cami)
+    G.add(cyl(topMat, 0.14, 0.18, 0.46, 0, 1.36, 0));
+    // open-front cardigan shell (gap faces camera +z)
+    const cardigan = cyl(jacketMat, 0.20, 0.22, 0.52, 0, 1.36, 0, 0, [2.15, 5.15]);
+    cardigan.scale.z = 0.88;
+    G.add(cardigan);
+    // neck + head
+    G.add(cyl(skin, 0.075, 0.085, 0.14, 0, 1.64, 0));
+    G.add(ball(skin, 0.225, 0, 1.87, 0));
+    // face: eyes, cheeks, lips
+    G.add(ball(glaze(C.eye,{clearcoat:0.3}), 0.028, -0.075, 1.89, 0.205));
+    G.add(ball(glaze(C.eye,{clearcoat:0.3}), 0.028,  0.075, 1.89, 0.205));
+    G.add(ball(glaze(C.cheek,{roughness:0.6,clearcoat:0.2}), 0.05, -0.13, 1.83, 0.17, 1, 0.7, 0.3));
+    G.add(ball(glaze(C.cheek,{roughness:0.6,clearcoat:0.2}), 0.05,  0.13, 1.83, 0.17, 1, 0.7, 0.3));
+    G.add(ball(glaze(C.lip,{roughness:0.5}), 0.045, 0, 1.79, 0.2, 1.3, 0.5, 0.5));
+    // hair: back cap + optional long side locks
+    const hairBack = ball(hairMat, 0.255, 0, 1.90, -0.05, 1, 1.08, 1.05);
+    G.add(hairBack);
+    // bangs / top hairline (covers crown, leaves face)
+    G.add(ball(hairMat, 0.235, 0, 1.97, 0.02, 1, 0.7, 1));
+    if (cfg.hairLong) {
+      G.add(cyl(hairMat, 0.09, 0.07, 0.7, -0.20, 1.55, -0.02));
+      G.add(cyl(hairMat, 0.09, 0.07, 0.7,  0.20, 1.55, -0.02));
+    }
+    if (cfg.curly) {
+      // a few curls
+      [[-0.22,1.62],[0.22,1.62],[-0.18,1.45],[0.18,1.45],[0,2.02]].forEach(p=>{
+        G.add(ball(hairMat, 0.085, p[0], p[1], -0.03));
+      });
+    }
+    // arms (sleeves = cardigan color), hands skin
+    if (cfg.raiseArm) {
+      // raised peace-sign arm (+x side)
+      const up = cyl(jacketMat, 0.06, 0.07, 0.5, 0.30, 1.78, 0.02, -0.55);
+      G.add(up);
+      G.add(ball(skin, 0.075, 0.40, 2.02, 0.04));
+      // other arm down
+      G.add(cyl(jacketMat, 0.06, 0.07, 0.5, -0.27, 1.35, 0.02, 0.18));
+      G.add(ball(skin, 0.07, -0.30, 1.10, 0.04));
+    } else {
+      G.add(cyl(jacketMat, 0.06, 0.07, 0.5,  0.27, 1.35, 0.02, -0.18));
+      G.add(ball(skin, 0.07,  0.30, 1.10, 0.04));
+      G.add(cyl(jacketMat, 0.06, 0.07, 0.5, -0.27, 1.35, 0.02, 0.18));
+      G.add(ball(skin, 0.07, -0.30, 1.10, 0.04));
+    }
+    // party hat
+    if (cfg.partyHat) {
+      const hat = new THREE.Mesh(new THREE.ConeGeometry(0.2, 0.42, 24), glaze(C.hat));
+      hat.position.set(0.02, 2.28, 0); hat.rotation.z = 0.08; G.add(hat);
+      G.add(ball(glaze(0xf0c0c8), 0.05, 0.03, 2.5, 0));
+    }
+    // handbag
+    if (cfg.bag) {
+      const b = box(glaze(C.bag), 0.2, 0.24, 0.1, 0.34, 1.2, 0.06);
+      G.add(b);
+    }
+    return G;
+  }
+
+  // ── turntable group (base + both girls) ──
+  const turntable = new THREE.Group();
+
+  const baseMat = glaze(0xf0e6d6, { clearcoat: 1, clearcoatRoughness: 0.15 });
+  const base = cyl(baseMat, 1.0, 1.06, 0.18, 0, -0.09, 0);
+  turntable.add(base);
+  const goldRim = new THREE.Mesh(
+    new THREE.TorusGeometry(0.99, 0.04, 16, 48),
+    new THREE.MeshStandardMaterial({ color: 0xC9A24B, metalness: 0.7, roughness: 0.3 })
+  );
+  goldRim.rotation.x = Math.PI/2; goldRim.position.y = 0.0; turntable.add(goldRim);
+
+  // girl A — brown long hair, cream cami + blue cardigan, cream pants, peace sign
+  const girlA = makeGirl({ hair: C.hairBrown, hairLong: true, top: C.cami,
+    jacket: C.cardigan, pants: C.pants, raiseArm: true });
+  girlA.position.set(-0.42, 0, 0.05); girlA.rotation.y = 0.2;
+  turntable.add(girlA);
+
+  // girl B — blonde curly, black top + cream cardigan, jeans, party hat, bag
+  const girlB = makeGirl({ hair: C.hairBlonde, curly: true, top: C.topBlack,
+    jacket: 0xede3d2, pants: C.jeans, partyHat: true, bag: true });
+  girlB.position.set(0.42, 0, -0.02); girlB.rotation.y = -0.2; girlB.scale.setScalar(0.97);
+  turntable.add(girlB);
+
+  turntable.scale.setScalar(0.9);
+  turntable.position.y = -0.05;
+  scene.add(turntable);
+
+  // ── render loop ──
+  let last = performance.now();
+  function resize() {
+    const w = mount.clientWidth, h = mount.clientHeight;
+    if (w === 0 || h === 0) return false;
+    if (renderer.domElement.width !== Math.floor(w * renderer.getPixelRatio()) ||
+        renderer.domElement.height !== Math.floor(h * renderer.getPixelRatio())) {
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h; camera.updateProjectionMatrix();
+    }
+    return true;
+  }
+  function loop(now) {
+    requestAnimationFrame(loop);
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    if (!resize()) return;
+    if (window.__spinning3D) turntable.rotation.y += dt * 0.8;  // slow ~8s/turn
+    renderer.render(scene, camera);
+  }
+  requestAnimationFrame(loop);
+
+  // debug handles (harmless in production)
+  window.__tt = turntable;
+  window.__renderOnce = () => { resize(); renderer.render(scene, camera); };
+})();
 </script>
 </body>
 </html>
