@@ -55,7 +55,7 @@
   .doll-video-wrap {
     position: absolute;
     left: 50%;
-    bottom: 33%;
+    bottom: 38%;
     width: 34%;
     transform: translateX(-50%);
     z-index: 2;
@@ -153,7 +153,7 @@
 <script>
 // ── audio source — replace the src with your voice note URL or base64 ──
 // Leave as null if no audio yet; the box still looks pretty 🎀
-const AUDIO_SRC = null;
+const AUDIO_SRC = '/voicenote.m4a';
 
 const audioEl   = AUDIO_SRC ? new Audio(AUDIO_SRC) : null;
 const dollVideo = document.getElementById('dollVideo');
@@ -222,15 +222,13 @@ window.addEventListener('touchcancel', stopWinding);
 
     for (let i = 0; i < d.length; i += 4) {
       const r = d[i], g = d[i+1], b = d[i+2];
-      // white threshold: all channels high and close together
-      const isWhite = r > 220 && g > 220 && b > 220;
-      const isNearWhite = r > 200 && g > 200 && b > 200 && Math.max(r,g,b) - Math.min(r,g,b) < 30;
-      if (isWhite) {
+      const lo = Math.min(r,g,b), hi = Math.max(r,g,b);
+      // only remove pixels that are near-pure white (all channels > 235, spread < 20)
+      if (lo > 235 && hi - lo < 20) {
         d[i+3] = 0;
-      } else if (isNearWhite) {
-        // soft feather at edges
-        const whiteness = (Math.min(r,g,b) - 200) / 20;
-        d[i+3] = Math.round(255 * whiteness);
+      } else if (lo > 218 && hi - lo < 25) {
+        // narrow feather zone at edges only
+        d[i+3] = Math.round(255 * (lo - 218) / 17);
       }
     }
     ctx.putImageData(img, 0, 0);
