@@ -3,731 +3,350 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>A little something for you 🗽</title>
+<title>A little something for you 🎀</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,400&display=swap');
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    background: #0a0a1a;
     min-height: 100vh;
+    background: #f0e0d0;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-family: 'Lato', sans-serif;
+    font-family: 'Cormorant Garamond', serif;
     overflow: hidden;
     user-select: none;
   }
 
-  /* ── city night sky background ── */
-  .sky {
+  /* ── warm studio gradient bg ── */
+  .bg {
     position: fixed; inset: 0;
-    background: radial-gradient(ellipse at 50% 0%, #1a1035 0%, #0a0a1a 70%);
+    background:
+      radial-gradient(ellipse at 50% 0%, #f5e8d8 0%, #e8d0b8 50%, #d4b89a 100%);
     z-index: 0;
   }
-  .star {
-    position: absolute;
-    background: white;
-    border-radius: 50%;
-    animation: twinkle var(--d, 3s) ease-in-out infinite;
-  }
-  @keyframes twinkle { 0%,100%{opacity:.2} 50%{opacity:1} }
-
-  /* ── hint text ── */
-  .hint {
-    position: relative; z-index: 10;
-    color: rgba(255,255,255,0.5);
-    font-size: 13px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 24px;
-    transition: opacity 0.6s;
-  }
-  .hint.hide { opacity: 0; }
-
-  /* ── music box wrapper ── */
-  .music-box {
-    position: relative; z-index: 10;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  /* ── snow globe ── */
-  .globe-wrap {
-    position: relative;
-    width: 280px;
-    height: 280px;
-  }
-
-  .globe {
-    width: 280px;
-    height: 280px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 35% 30%,
-      rgba(200,220,255,0.25) 0%,
-      rgba(140,170,220,0.12) 40%,
-      rgba(80,100,180,0.08) 100%);
-    box-shadow:
-      inset -18px -18px 60px rgba(0,0,50,0.5),
-      inset 8px 8px 30px rgba(200,230,255,0.15),
-      0 0 0 2px rgba(150,170,220,0.3),
-      0 0 60px rgba(80,120,255,0.15),
-      0 20px 40px rgba(0,0,0,0.6);
-    position: relative;
-    overflow: hidden;
-    cursor: pointer;
-  }
-
-  /* glass reflection */
-  .globe::before {
+  /* subtle vignette */
+  .bg::after {
     content: '';
-    position: absolute;
-    top: 8%; left: 15%;
-    width: 35%; height: 25%;
-    background: radial-gradient(ellipse, rgba(255,255,255,0.35) 0%, transparent 100%);
-    border-radius: 50%;
-    transform: rotate(-30deg);
-    pointer-events: none;
-  }
-  .globe::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    background: radial-gradient(circle at 50% 110%, rgba(255,200,100,0.08) 0%, transparent 60%);
-    pointer-events: none;
-  }
-
-  /* ── NYC scene SVG ── */
-  .scene {
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    width: 100%; height: 100%;
-    border-radius: 50%;
-    overflow: hidden;
-  }
-
-  /* ── snow particles ── */
-  .snow-container {
     position: absolute; inset: 0;
-    border-radius: 50%;
-    overflow: hidden;
-    pointer-events: none;
-  }
-  .flake {
-    position: absolute;
-    background: white;
-    border-radius: 50%;
-    opacity: 0;
-    animation: fall linear infinite;
-    animation-play-state: paused;
-  }
-  @keyframes fall {
-    0%   { transform: translateY(-20px) translateX(0) rotate(0deg); opacity: 0; }
-    10%  { opacity: 0.9; }
-    90%  { opacity: 0.6; }
-    100% { transform: translateY(290px) translateX(var(--drift)) rotate(360deg); opacity: 0; }
+    background: radial-gradient(ellipse at 50% 50%, transparent 40%, rgba(80,40,10,0.18) 100%);
   }
 
-  .playing .flake { animation-play-state: running; }
-
-  /* ── dancer ── */
-  .dancer-wrap {
-    position: absolute;
-    bottom: 72px;
-    left: 50%;
-    transform: translateX(-50%);
-    transform-origin: bottom center;
-  }
-  .dancer-wrap svg {
-    animation: spin 1.8s linear infinite;
-    animation-play-state: paused;
-  }
-  .playing .dancer-wrap svg { animation-play-state: running; }
-
-  @keyframes spin { from{transform:rotate(0)} to{transform:rotate(360deg)} }
-
-  /* ── base ── */
-  .base {
-    width: 320px;
-    background: linear-gradient(160deg, #1c1c2e 0%, #2a1f3d 50%, #1c1c2e 100%);
-    border-radius: 0 0 24px 24px;
-    padding: 18px 24px 22px;
-    box-shadow:
-      0 8px 32px rgba(0,0,0,0.8),
-      inset 0 1px 0 rgba(255,255,255,0.08);
-    position: relative;
-    margin-top: -12px;
-  }
-
-  /* gold trim on top of base */
-  .base::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, transparent, #c9a84c, #f0d070, #c9a84c, transparent);
-    border-radius: 2px;
-  }
-
-  .base-label {
-    text-align: center;
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
-    color: #c9a84c;
-    font-size: 14px;
-    letter-spacing: 1.5px;
-    margin-bottom: 14px;
-    text-shadow: 0 0 12px rgba(201,168,76,0.4);
-  }
-
-  /* ── winding handle ── */
-  .handle-section {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-  }
-
-  .status-dots {
-    display: flex; gap: 5px; align-items: center;
-  }
-  .dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: #2a2a3a;
-    border: 1px solid #3a3a50;
-    transition: background 0.2s, box-shadow 0.2s;
-  }
-  .playing .dot:nth-child(1) { background:#f7c84b; box-shadow:0 0 6px #f7c84b; animation: dotpulse 0.6s 0s ease-in-out infinite alternate; }
-  .playing .dot:nth-child(2) { background:#f7c84b; box-shadow:0 0 6px #f7c84b; animation: dotpulse 0.6s 0.2s ease-in-out infinite alternate; }
-  .playing .dot:nth-child(3) { background:#f7c84b; box-shadow:0 0 6px #f7c84b; animation: dotpulse 0.6s 0.4s ease-in-out infinite alternate; }
-  @keyframes dotpulse { from{opacity:0.4} to{opacity:1} }
-
-  .wind-btn {
-    position: relative;
-    width: 64px; height: 64px;
-    cursor: pointer;
-    flex-shrink: 0;
-  }
-
-  /* the key/handle shape */
-  .key-shaft {
-    position: absolute;
-    bottom: 0; left: 50%;
-    transform: translateX(-50%);
-    width: 8px; height: 32px;
-    background: linear-gradient(90deg, #a07830, #e8c060, #a07830);
-    border-radius: 4px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.5);
-  }
-  .key-ring {
-    position: absolute;
-    top: 4px; left: 50%;
-    transform: translateX(-50%);
-    width: 28px; height: 28px;
-    border: 5px solid #c9a84c;
-    border-radius: 50%;
-    background: transparent;
-    box-shadow:
-      0 0 0 1px rgba(255,220,100,0.3),
-      inset 0 0 6px rgba(0,0,0,0.4),
-      0 2px 8px rgba(0,0,0,0.5);
-  }
-  .key-cross-h {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 14px; height: 4px;
-    background: linear-gradient(90deg, #a07830, #e8c060, #a07830);
-    border-radius: 2px;
-  }
-  .key-cross-v {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 4px; height: 14px;
-    background: linear-gradient(180deg, #a07830, #e8c060, #a07830);
-    border-radius: 2px;
-  }
-
-  /* key rotation while winding */
-  .wind-btn .key-ring,
-  .wind-btn .key-cross-h,
-  .wind-btn .key-cross-v,
-  .wind-btn .key-shaft {
-    transition: transform 0.1s;
-  }
-  .winding .wind-btn { animation: keywind 0.4s linear infinite; }
-  @keyframes keywind { from{transform:rotate(0)} to{transform:rotate(360deg)} }
-
-  .wind-label {
-    font-size: 9px;
-    letter-spacing: 1.5px;
-    color: rgba(201,168,76,0.6);
-    text-transform: uppercase;
-    text-align: center;
-    margin-top: 6px;
-  }
-
-  /* ── record screen ── */
+  /* ════════════ RECORD SCREEN ════════════ */
   #record-screen {
-    position: relative; z-index: 20;
+    position: relative; z-index: 10;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 20px;
+    gap: 18px;
+    padding: 32px 24px;
   }
-
   #record-screen h1 {
     font-family: 'Playfair Display', serif;
-    color: #fff;
-    font-size: 22px;
+    font-style: italic;
+    font-size: 24px;
+    color: #4a2e1a;
     text-align: center;
     line-height: 1.4;
-    max-width: 300px;
   }
   #record-screen p {
-    color: rgba(255,255,255,0.5);
-    font-size: 13px;
+    font-size: 15px;
+    color: #7a5a40;
     text-align: center;
     max-width: 260px;
-    line-height: 1.6;
+    line-height: 1.7;
+    font-style: italic;
+  }
+
+  /* small music box preview on record screen */
+  .box-preview {
+    width: 180px;
+    opacity: 0.85;
+    margin: 4px 0;
+    filter: drop-shadow(0 8px 20px rgba(80,40,10,0.2));
   }
 
   .rec-btn {
-    width: 80px; height: 80px;
+    width: 72px; height: 72px;
     border-radius: 50%;
     border: none;
-    background: radial-gradient(circle at 35% 35%, #e05555, #990000);
-    box-shadow: 0 0 0 4px rgba(220,50,50,0.2), 0 4px 20px rgba(200,0,0,0.4);
+    background: radial-gradient(circle at 35% 35%, #d94040, #8b1a1a);
+    box-shadow:
+      0 0 0 5px rgba(180,80,60,0.15),
+      0 4px 18px rgba(160,40,20,0.35);
     cursor: pointer;
     position: relative;
-    transition: transform 0.1s, box-shadow 0.1s;
+    transition: transform 0.1s;
   }
-  .rec-btn:active { transform: scale(0.95); }
-  .rec-btn.recording {
-    animation: recpulse 1s ease-in-out infinite;
-  }
+  .rec-btn:active { transform: scale(0.94); }
+  .rec-btn.recording { animation: recpulse 1s ease-in-out infinite; }
   @keyframes recpulse {
-    0%,100% { box-shadow: 0 0 0 4px rgba(220,50,50,0.2), 0 4px 20px rgba(200,0,0,0.4); }
-    50% { box-shadow: 0 0 0 12px rgba(220,50,50,0.1), 0 4px 30px rgba(200,0,0,0.6); }
+    0%,100% { box-shadow: 0 0 0 5px rgba(180,80,60,0.15), 0 4px 18px rgba(160,40,20,0.35); }
+    50%      { box-shadow: 0 0 0 14px rgba(180,80,60,0.08), 0 4px 26px rgba(160,40,20,0.5); }
   }
   .rec-btn .inner {
-    width: 32px; height: 32px;
+    width: 28px; height: 28px;
     background: white;
     border-radius: 50%;
     position: absolute; top:50%; left:50%;
     transform: translate(-50%,-50%);
-    transition: border-radius 0.3s;
+    transition: border-radius 0.3s, width 0.3s, height 0.3s;
   }
-  .rec-btn.recording .inner {
-    border-radius: 4px;
-    width: 26px; height: 26px;
+  .rec-btn.recording .inner { border-radius: 4px; width: 24px; height: 24px; }
+
+  #recStatus {
+    font-size: 13px;
+    letter-spacing: 1.5px;
+    color: #9a6a40;
+    text-transform: uppercase;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
   }
 
   .done-btn {
+    display: none;
     background: none;
-    border: 1px solid rgba(201,168,76,0.5);
-    color: #c9a84c;
-    padding: 10px 28px;
+    border: 1px solid rgba(120,70,30,0.4);
+    color: #6a3a18;
+    padding: 10px 30px;
     border-radius: 30px;
     font-family: 'Playfair Display', serif;
     font-style: italic;
     cursor: pointer;
-    font-size: 14px;
-    letter-spacing: 1px;
+    font-size: 15px;
+    letter-spacing: 0.5px;
     transition: all 0.2s;
-    display: none;
   }
-  .done-btn:hover { background: rgba(201,168,76,0.1); border-color: #c9a84c; }
+  .done-btn:hover { background: rgba(120,70,30,0.07); border-color: #6a3a18; }
   .done-btn.visible { display: block; }
 
-  /* ── player screen ── */
-  #player-screen { display: none; }
-  #player-screen.visible { display: flex; flex-direction: column; align-items: center; }
-
-  /* winding instruction */
-  .wind-instruction {
-    margin-top: 12px;
-    font-size: 12px;
-    color: rgba(255,255,255,0.35);
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    text-align: center;
-    transition: opacity 0.5s;
-  }
-  .wind-instruction.hide { opacity: 0; }
-
-  /* glow on globe while playing */
-  .globe-wrap.playing .globe {
-    box-shadow:
-      inset -18px -18px 60px rgba(0,0,50,0.5),
-      inset 8px 8px 30px rgba(200,230,255,0.15),
-      0 0 0 2px rgba(150,170,220,0.3),
-      0 0 80px rgba(255,200,80,0.25),
-      0 20px 40px rgba(0,0,0,0.6);
-  }
-
-  /* ── waveform viz ── */
-  #waveform {
-    position: absolute;
-    bottom: 8px; left: 20px; right: 20px;
-    height: 24px;
-    display: flex;
+  /* ════════════ PLAYER SCREEN ════════════ */
+  #player-screen {
+    display: none;
+    flex-direction: column;
     align-items: center;
+    position: relative; z-index: 10;
+  }
+  #player-screen.visible { display: flex; }
+
+  .player-label-top {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 18px;
+    color: #6a3a18;
+    letter-spacing: 0.5px;
+    margin-bottom: 16px;
+    opacity: 0.85;
+  }
+
+  /* ── music box stage ── */
+  .box-stage {
+    position: relative;
+    width: min(420px, 92vw);
+  }
+
+  /* the music box image fills the stage */
+  .box-img {
+    width: 100%;
+    display: block;
+    filter: drop-shadow(0 16px 40px rgba(80,40,10,0.3));
+    border-radius: 4px;
+  }
+
+  /* doll sits on the turntable — positioned absolutely over the box */
+  .turntable-wrap {
+    position: absolute;
+    /* tuned to sit on the round platform inside the box */
+    left: 50%;
+    top: 38%;
+    width: 36%;
+    transform: translateX(-50%);
+    transform-origin: bottom center;
+    display: flex;
+    align-items: flex-end;
     justify-content: center;
-    gap: 2px;
+  }
+
+  .doll-img {
+    width: 100%;
+    filter: drop-shadow(0 4px 12px rgba(80,40,10,0.25));
+    transform-origin: bottom center;
+    /* perspective applied on parent */
+  }
+
+  /* turntable spin: rotates around Y axis = horizontal spin like a music box */
+  .turntable-wrap.spinning {
+    animation: turntable-spin 4s linear infinite;
+  }
+  @keyframes turntable-spin {
+    0%   { transform: translateX(-50%) perspective(300px) rotateY(0deg); }
+    100% { transform: translateX(-50%) perspective(300px) rotateY(360deg); }
+  }
+
+  /* ── invisible winding key hit area ── */
+  /* covers the key on the right side of the box */
+  .key-hit-area {
+    position: absolute;
+    right: 0%;
+    top: 48%;
+    width: 14%;
+    height: 18%;
+    cursor: pointer;
+    border-radius: 50%;
+    /* outline: 2px dashed red; */ /* debug - uncomment to see */
+  }
+
+  /* key glow when active */
+  .key-hit-area.active::after {
+    content: '';
+    position: absolute; inset: -4px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(220,180,80,0.35) 0%, transparent 70%);
+    animation: keyglow 0.5s ease-in-out infinite alternate;
+  }
+  @keyframes keyglow {
+    from { opacity: 0.5; transform: scale(0.95); }
+    to   { opacity: 1;   transform: scale(1.05); }
+  }
+
+  /* ── hint text below ── */
+  .wind-hint {
+    margin-top: 14px;
+    font-size: 14px;
+    font-style: italic;
+    color: #8a5a34;
+    letter-spacing: 1px;
+    text-align: center;
+    transition: opacity 0.6s;
+  }
+  .wind-hint.hide { opacity: 0; }
+
+  /* ── playing indicator: waveform dots ── */
+  .wave-dots {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    margin-top: 10px;
+    height: 20px;
     opacity: 0;
     transition: opacity 0.3s;
   }
-  .playing #waveform { opacity: 1; }
-  .bar {
-    width: 3px;
-    background: rgba(247,200,75,0.7);
-    border-radius: 2px;
-    animation: wave 0.8s ease-in-out infinite;
-    animation-play-state: paused;
+  .wave-dots.show { opacity: 1; }
+  .wave-dots span {
+    width: 4px;
+    background: #9a5a2a;
+    border-radius: 3px;
+    animation: wavebar 0.7s ease-in-out infinite alternate;
   }
-  .playing .bar { animation-play-state: running; }
-  @keyframes wave {
-    0%,100% { height: 4px; }
-    50% { height: var(--h, 18px); }
+  @keyframes wavebar {
+    from { height: 4px; }
+    to   { height: var(--h, 16px); }
   }
+
+  /* ── "wound down" message ── */
+  .ended-msg {
+    font-style: italic;
+    color: #7a4a28;
+    font-size: 14px;
+    margin-top: 10px;
+    opacity: 0;
+    transition: opacity 0.6s;
+    text-align: center;
+  }
+  .ended-msg.show { opacity: 1; }
 </style>
 </head>
 <body>
+<div class="bg"></div>
 
-<div class="sky" id="sky"></div>
-
-<!-- ══════════════════════════════════ RECORD SCREEN ══════════════════════════════════ -->
+<!-- ══════════════ RECORD SCREEN ══════════════ -->
 <div id="record-screen">
   <h1>Leave her a little something</h1>
-  <p>Record your voice note. She'll need to wind the music box to hear it.</p>
+
+  <!-- small preview of the music box -->
+  <img class="box-preview" id="boxPreview" src="/image/musicbox(blank).png" alt="music box"/>
+
+  <p>Record your voice. She'll wind the music box to hear it.</p>
+
   <button class="rec-btn" id="recBtn"><div class="inner"></div></button>
-  <p id="recStatus" style="color:#c9a84c;font-size:12px;letter-spacing:1.5px;">tap to record</p>
-  <button class="done-btn" id="doneBtn">wrap it up →</button>
+  <p id="recStatus">tap to record</p>
+  <button class="done-btn" id="doneBtn">seal it with a bow →</button>
 </div>
 
-<!-- ══════════════════════════════════ PLAYER SCREEN ══════════════════════════════════ -->
+<!-- ══════════════ PLAYER SCREEN ══════════════ -->
 <div id="player-screen">
-  <div class="hint" id="hint">wind the key to play</div>
+  <div class="player-label-top">a little something for you 🎀</div>
 
-  <div class="music-box" id="musicBox">
-    <!-- globe -->
-    <div class="globe-wrap" id="globeWrap">
-      <div class="globe" id="globe">
+  <div class="box-stage">
+    <img class="box-img" id="boxImg" src="/image/musicbox(blank).png" alt="music box"/>
 
-        <!-- NYC scene -->
-        <svg class="scene" viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <radialGradient id="skyGrad" cx="50%" cy="40%" r="60%">
-              <stop offset="0%" stop-color="#1a0a3a"/>
-              <stop offset="100%" stop-color="#050510"/>
-            </radialGradient>
-            <linearGradient id="groundGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#2a1f40"/>
-              <stop offset="100%" stop-color="#100a20"/>
-            </linearGradient>
-            <filter id="glow">
-              <feGaussianBlur stdDeviation="2" result="blur"/>
-              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-            </filter>
-            <clipPath id="globeClip">
-              <circle cx="140" cy="140" r="138"/>
-            </clipPath>
-          </defs>
-          <g clip-path="url(#globeClip)">
-            <!-- sky -->
-            <rect width="280" height="280" fill="url(#skyGrad)"/>
-
-            <!-- moon -->
-            <circle cx="220" cy="40" r="14" fill="#fffde0" opacity="0.9"/>
-            <circle cx="225" cy="36" r="12" fill="#1a0a3a"/>
-
-            <!-- stars -->
-            <circle cx="60" cy="30" r="1.2" fill="white" opacity="0.8"/>
-            <circle cx="90" cy="50" r="0.8" fill="white" opacity="0.7"/>
-            <circle cx="180" cy="25" r="1" fill="white" opacity="0.9"/>
-            <circle cx="130" cy="40" r="1.5" fill="white" opacity="0.6"/>
-            <circle cx="50" cy="60" r="0.8" fill="white" opacity="0.7"/>
-            <circle cx="240" cy="65" r="1" fill="white" opacity="0.8"/>
-            <circle cx="160" cy="55" r="0.6" fill="white" opacity="0.5"/>
-
-            <!-- ── NYC BUILDINGS ── -->
-            <!-- Empire State Building (center, tall) -->
-            <rect x="120" y="90" width="40" height="110" fill="#1e1530" rx="1"/>
-            <!-- ESB spire -->
-            <polygon points="135,90 145,90 141,55 139,55" fill="#2a1f42"/>
-            <rect x="139" y="55" width="2" height="20" fill="#c9a84c" opacity="0.9"/>
-            <!-- ESB windows -->
-            <rect x="126" y="96" width="6" height="4" fill="#f7c84b" opacity="0.8" rx="0.5"/>
-            <rect x="136" y="96" width="6" height="4" fill="#f7c84b" opacity="0.6" rx="0.5"/>
-            <rect x="148" y="96" width="6" height="4" fill="#f7c84b" opacity="0.9" rx="0.5"/>
-            <rect x="126" y="106" width="6" height="4" fill="#f7c84b" opacity="0.5" rx="0.5"/>
-            <rect x="136" y="106" width="6" height="4" fill="#f7c84b" opacity="0.7" rx="0.5"/>
-            <rect x="148" y="106" width="6" height="4" fill="#f7c84b" opacity="0.4" rx="0.5"/>
-            <rect x="126" y="116" width="6" height="4" fill="#f7c84b" opacity="0.8" rx="0.5"/>
-            <rect x="136" y="116" width="6" height="4" fill="#f7c84b" opacity="0.3" rx="0.5"/>
-            <rect x="148" y="116" width="6" height="4" fill="#f7c84b" opacity="0.6" rx="0.5"/>
-            <rect x="126" y="126" width="6" height="4" fill="#f7c84b" opacity="0.7" rx="0.5"/>
-            <rect x="136" y="126" width="6" height="4" fill="#f7c84b" opacity="0.5" rx="0.5"/>
-            <rect x="148" y="126" width="6" height="4" fill="#f7c84b" opacity="0.8" rx="0.5"/>
-
-            <!-- Left building (wide) -->
-            <rect x="20" y="130" width="55" height="70" fill="#150f28" rx="1"/>
-            <rect x="28" y="120" width="38" height="15" fill="#150f28" rx="1"/>
-            <!-- left building windows -->
-            <rect x="26" y="126" width="5" height="4" fill="#f7c84b" opacity="0.7" rx="0.5"/>
-            <rect x="35" y="126" width="5" height="4" fill="#f7c84b" opacity="0.4" rx="0.5"/>
-            <rect x="44" y="126" width="5" height="4" fill="#f7c84b" opacity="0.8" rx="0.5"/>
-            <rect x="53" y="126" width="5" height="4" fill="#f7c84b" opacity="0.5" rx="0.5"/>
-            <rect x="26" y="136" width="5" height="4" fill="#f7c84b" opacity="0.5" rx="0.5"/>
-            <rect x="35" y="136" width="5" height="4" fill="#f7c84b" opacity="0.8" rx="0.5"/>
-            <rect x="44" y="136" width="5" height="4" fill="#f7c84b" opacity="0.3" rx="0.5"/>
-            <rect x="53" y="136" width="5" height="4" fill="#f7c84b" opacity="0.7" rx="0.5"/>
-            <rect x="26" y="146" width="5" height="4" fill="#f7c84b" opacity="0.9" rx="0.5"/>
-            <rect x="35" y="146" width="5" height="4" fill="#f7c84b" opacity="0.4" rx="0.5"/>
-            <rect x="44" y="146" width="5" height="4" fill="#f7c84b" opacity="0.6" rx="0.5"/>
-
-            <!-- Right building cluster -->
-            <rect x="200" y="120" width="50" height="80" fill="#12102a" rx="1"/>
-            <rect x="210" y="108" width="30" height="18" fill="#12102a" rx="1"/>
-            <rect x="215" y="100" width="20" height="12" fill="#12102a" rx="1"/>
-            <!-- right windows -->
-            <rect x="204" y="126" width="5" height="4" fill="#f7c84b" opacity="0.6" rx="0.5"/>
-            <rect x="214" y="126" width="5" height="4" fill="#f7c84b" opacity="0.8" rx="0.5"/>
-            <rect x="224" y="126" width="5" height="4" fill="#f7c84b" opacity="0.4" rx="0.5"/>
-            <rect x="234" y="126" width="5" height="4" fill="#f7c84b" opacity="0.7" rx="0.5"/>
-            <rect x="204" y="136" width="5" height="4" fill="#f7c84b" opacity="0.3" rx="0.5"/>
-            <rect x="214" y="136" width="5" height="4" fill="#f7c84b" opacity="0.7" rx="0.5"/>
-            <rect x="224" y="136" width="5" height="4" fill="#f7c84b" opacity="0.9" rx="0.5"/>
-            <rect x="234" y="136" width="5" height="4" fill="#f7c84b" opacity="0.5" rx="0.5"/>
-            <rect x="204" y="146" width="5" height="4" fill="#f7c84b" opacity="0.8" rx="0.5"/>
-            <rect x="214" y="146" width="5" height="4" fill="#f7c84b" opacity="0.4" rx="0.5"/>
-
-            <!-- mid-left building -->
-            <rect x="70" y="140" width="40" height="60" fill="#1a1332" rx="1"/>
-            <rect x="75" y="133" width="30" height="12" fill="#1a1332" rx="1"/>
-            <rect x="77" y="139" width="5" height="3" fill="#f7c84b" opacity="0.7" rx="0.5"/>
-            <rect x="86" y="139" width="5" height="3" fill="#f7c84b" opacity="0.5" rx="0.5"/>
-            <rect x="95" y="139" width="5" height="3" fill="#f7c84b" opacity="0.8" rx="0.5"/>
-            <rect x="77" y="147" width="5" height="3" fill="#f7c84b" opacity="0.4" rx="0.5"/>
-            <rect x="86" y="147" width="5" height="3" fill="#f7c84b" opacity="0.7" rx="0.5"/>
-            <rect x="95" y="147" width="5" height="3" fill="#f7c84b" opacity="0.6" rx="0.5"/>
-
-            <!-- mid-right building -->
-            <rect x="170" y="145" width="34" height="55" fill="#160e2e" rx="1"/>
-            <rect x="175" y="137" width="24" height="12" fill="#160e2e" rx="1"/>
-            <rect x="176" y="142" width="4" height="3" fill="#f7c84b" opacity="0.8" rx="0.5"/>
-            <rect x="184" y="142" width="4" height="3" fill="#f7c84b" opacity="0.5" rx="0.5"/>
-            <rect x="192" y="142" width="4" height="3" fill="#f7c84b" opacity="0.7" rx="0.5"/>
-            <rect x="176" y="149" width="4" height="3" fill="#f7c84b" opacity="0.4" rx="0.5"/>
-            <rect x="184" y="149" width="4" height="3" fill="#f7c84b" opacity="0.9" rx="0.5"/>
-
-            <!-- ── GROUND ── -->
-            <rect x="0" y="200" width="280" height="80" fill="url(#groundGrad)"/>
-            <!-- street -->
-            <rect x="0" y="200" width="280" height="3" fill="#2e2050" opacity="0.8"/>
-            <!-- sidewalk lines -->
-            <line x1="0" y1="208" x2="280" y2="208" stroke="#2a1a50" stroke-width="0.5" opacity="0.5"/>
-
-            <!-- ── YELLOW TAXI ── -->
-            <g transform="translate(45, 198)">
-              <!-- body -->
-              <rect x="0" y="-18" width="60" height="18" fill="#f7c84b" rx="4"/>
-              <!-- roof -->
-              <rect x="10" y="-30" width="40" height="14" fill="#f0b800" rx="3"/>
-              <!-- windows -->
-              <rect x="13" y="-28" width="14" height="10" fill="#8ec6e6" opacity="0.8" rx="1"/>
-              <rect x="31" y="-28" width="14" height="10" fill="#8ec6e6" opacity="0.8" rx="1"/>
-              <!-- taxi sign -->
-              <rect x="23" y="-38" width="14" height="8" fill="#f7c84b" rx="2"/>
-              <rect x="24" y="-37" width="12" height="6" fill="#111" rx="1"/>
-              <text x="30" y="-32.5" font-size="4" fill="#f7c84b" text-anchor="middle" font-family="sans-serif">TAXI</text>
-              <!-- wheels -->
-              <circle cx="12" cy="0" r="5" fill="#222"/>
-              <circle cx="12" cy="0" r="2.5" fill="#444"/>
-              <circle cx="48" cy="0" r="5" fill="#222"/>
-              <circle cx="48" cy="0" r="2.5" fill="#444"/>
-              <!-- headlights -->
-              <rect x="0" y="-10" width="4" height="5" fill="#fffde0" rx="1"/>
-              <!-- tail lights -->
-              <rect x="56" y="-10" width="4" height="5" fill="#ff4444" rx="1" opacity="0.8"/>
-              <!-- door line -->
-              <line x1="30" y1="-17" x2="30" y2="-1" stroke="#d4a800" stroke-width="0.8"/>
-              <!-- door handle -->
-              <rect x="32" y="-10" width="5" height="1.5" fill="#d4a800" rx="1"/>
-            </g>
-
-            <!-- ── HOT DOG CART ── -->
-            <g transform="translate(172, 205)">
-              <!-- umbrella -->
-              <line x1="24" y1="-50" x2="24" y2="-8" stroke="#cc3322" stroke-width="2"/>
-              <!-- umbrella canopy -->
-              <path d="M0,-50 Q24,-65 48,-50 Q36,-42 24,-40 Q12,-42 0,-50Z" fill="#e83a28" opacity="0.9"/>
-              <path d="M0,-50 Q24,-65 48,-50" stroke="#fff" stroke-width="0.8" fill="none" opacity="0.5"/>
-              <!-- stripes on umbrella -->
-              <path d="M12,-55 Q18,-45 24,-40" stroke="white" stroke-width="1" fill="none" opacity="0.6"/>
-              <path d="M36,-55 Q30,-45 24,-40" stroke="white" stroke-width="1" fill="none" opacity="0.6"/>
-              <!-- cart body -->
-              <rect x="2" y="-8" width="44" height="8" fill="#f5f5f0" rx="2"/>
-              <!-- cart detail -->
-              <rect x="8" y="-6" width="12" height="4" fill="#e8e8e0" rx="1"/>
-              <rect x="24" y="-6" width="12" height="4" fill="#ddd" rx="1"/>
-              <!-- hot dog in bun (peeking out) -->
-              <ellipse cx="24" cy="-9" rx="9" ry="3" fill="#c8a882"/>
-              <ellipse cx="24" cy="-9.5" rx="6" ry="2" fill="#c05030"/>
-              <!-- mustard squiggle -->
-              <path d="M18,-9 Q21,-11 24,-9 Q27,-7 30,-9" stroke="#f7c84b" stroke-width="1" fill="none"/>
-              <!-- wheels -->
-              <circle cx="8" cy="0" r="4" fill="#888"/>
-              <circle cx="8" cy="0" r="2" fill="#aaa"/>
-              <circle cx="40" cy="0" r="4" fill="#888"/>
-              <circle cx="40" cy="0" r="2" fill="#aaa"/>
-              <!-- cart label -->
-              <text x="24" y="-1" font-size="3.5" fill="#c05030" text-anchor="middle" font-family="sans-serif" font-weight="bold">HOT DOGS</text>
-            </g>
-
-            <!-- street lights -->
-            <g transform="translate(105, 170)">
-              <rect x="-1" y="0" width="2" height="30" fill="#2a2040"/>
-              <rect x="-8" y="-2" width="16" height="3" fill="#2a2040" rx="1"/>
-              <ellipse cx="0" cy="-2" rx="4" ry="3" fill="#f7e89a" opacity="0.9"/>
-            </g>
-          </g>
-        </svg>
-
-        <!-- Dancer -->
-        <div class="dancer-wrap" id="dancerWrap">
-          <svg width="28" height="52" viewBox="0 0 28 52" xmlns="http://www.w3.org/2000/svg">
-            <!-- head -->
-            <circle cx="14" cy="6" r="5" fill="#f0d0c0"/>
-            <!-- bun -->
-            <circle cx="14" cy="2" r="3.5" fill="#d4a870"/>
-            <!-- body/tutu -->
-            <path d="M10,11 Q14,9 18,11 L20,22 Q14,20 8,22 Z" fill="#e8e0f0"/>
-            <!-- tutu skirt -->
-            <ellipse cx="14" cy="22" rx="11" ry="4" fill="rgba(220,210,240,0.9)"/>
-            <ellipse cx="14" cy="21" rx="9" ry="3" fill="rgba(200,190,230,0.8)"/>
-            <!-- legs -->
-            <line x1="12" y1="22" x2="9" y2="36" stroke="#f0d0c0" stroke-width="2.5" stroke-linecap="round"/>
-            <line x1="16" y1="22" x2="18" y2="36" stroke="#f0d0c0" stroke-width="2.5" stroke-linecap="round"/>
-            <!-- left arm up -->
-            <line x1="10" y1="14" x2="4" y2="8" stroke="#f0d0c0" stroke-width="2" stroke-linecap="round"/>
-            <!-- right arm out -->
-            <line x1="18" y1="14" x2="24" y2="18" stroke="#f0d0c0" stroke-width="2" stroke-linecap="round"/>
-            <!-- shoes -->
-            <ellipse cx="9" cy="37" rx="3" ry="1.5" fill="#e8b0a0"/>
-            <ellipse cx="18" cy="37" rx="3" ry="1.5" fill="#e8b0a0"/>
-          </svg>
-        </div>
-
-        <!-- snow -->
-        <div class="snow-container" id="snowContainer"></div>
-
-        <!-- waveform at bottom of globe -->
-        <div id="waveform"></div>
-      </div>
+    <!-- doll on turntable -->
+    <div class="turntable-wrap" id="turntable">
+      <img class="doll-img" id="dollImg" src="/image/dolls_1.png" alt=""/>
     </div>
 
-    <!-- base -->
-    <div class="base" id="base">
-      <div class="base-label">a little something for you</div>
-      <div class="handle-section">
-        <div class="status-dots">
-          <div class="dot"></div>
-          <div class="dot"></div>
-          <div class="dot"></div>
-        </div>
-        <div>
-          <div class="wind-btn" id="windBtn">
-            <div class="key-ring">
-              <div class="key-cross-h"></div>
-              <div class="key-cross-v"></div>
-            </div>
-            <div class="key-shaft"></div>
-          </div>
-          <div class="wind-label">wind to play</div>
-        </div>
-        <div class="status-dots">
-          <div class="dot"></div>
-          <div class="dot"></div>
-          <div class="dot"></div>
-        </div>
-      </div>
-    </div>
+    <!-- invisible hit area over the winding key -->
+    <div class="key-hit-area" id="windBtn"></div>
   </div>
 
-  <div class="wind-instruction" id="windInstruction">hold down the key · release to pause</div>
+  <div class="wind-hint" id="windHint">hold the key to play ✦</div>
+
+  <div class="wave-dots" id="waveDots">
+    <span style="--h:8px;  animation-delay:0s"></span>
+    <span style="--h:16px; animation-delay:0.1s"></span>
+    <span style="--h:12px; animation-delay:0.2s"></span>
+    <span style="--h:18px; animation-delay:0.05s"></span>
+    <span style="--h:10px; animation-delay:0.15s"></span>
+    <span style="--h:14px; animation-delay:0.25s"></span>
+    <span style="--h:8px;  animation-delay:0.35s"></span>
+  </div>
+
+  <div class="ended-msg" id="endedMsg">wind again to replay ↺</div>
 </div>
 
 <script>
-// ── stars ──
-const sky = document.getElementById('sky');
-for (let i = 0; i < 80; i++) {
-  const s = document.createElement('div');
-  s.className = 'star';
-  const size = Math.random() * 2 + 0.5;
-  s.style.cssText = `
-    width:${size}px; height:${size}px;
-    left:${Math.random()*100}%;
-    top:${Math.random()*60}%;
-    --d:${2 + Math.random()*4}s;
-    animation-delay:${Math.random()*4}s;
-  `;
-  sky.appendChild(s);
+// ════════════════════════════════════════════════
+// If this is a baked player file (sent to friend)
+// images & audio are already embedded via window.__*__
+// ════════════════════════════════════════════════
+if (window.__MUSICBOX_B64__) document.getElementById('boxImg').src = window.__MUSICBOX_B64__;
+if (window.__MUSICBOX_B64__) document.getElementById('boxPreview').src = window.__MUSICBOX_B64__;
+if (window.__DOLL_B64__)     document.getElementById('dollImg').src  = window.__DOLL_B64__;
+if (window.__AUDIO_B64__) {
+  // boot straight to player
+  window.addEventListener('DOMContentLoaded', () => {}, { once: true });
+  document.getElementById('record-screen').style.display = 'none';
+  const ps = document.getElementById('player-screen');
+  ps.classList.add('visible');
 }
 
-// ── snow flakes ──
-const snowContainer = document.getElementById('snowContainer');
-for (let i = 0; i < 50; i++) {
-  const f = document.createElement('div');
-  f.className = 'flake';
-  const size = Math.random() * 4 + 1;
-  const dur = 2 + Math.random() * 3;
-  const delay = Math.random() * 4;
-  const drift = (Math.random() - 0.5) * 60;
-  f.style.cssText = `
-    width:${size}px; height:${size}px;
-    left:${Math.random()*100}%;
-    top:-10px;
-    --drift:${drift}px;
-    animation-duration:${dur}s;
-    animation-delay:${delay}s;
-    opacity:0;
-  `;
-  snowContainer.appendChild(f);
-}
+// ════ load images as base64 (for embedding later) ════
+let musicboxB64 = '', dollB64 = '';
+(async () => {
+  const toB64 = url => fetch(url)
+    .then(r => r.blob())
+    .then(b => new Promise(res => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.readAsDataURL(b); }));
+  try {
+    [musicboxB64, dollB64] = await Promise.all([
+      toB64('/image/musicbox(blank).png'),
+      toB64('/image/dolls_1.png')
+    ]);
+  } catch(e) { /* images already served locally */ }
+})();
 
-// ── waveform bars ──
-const waveform = document.getElementById('waveform');
-for (let i = 0; i < 24; i++) {
-  const b = document.createElement('div');
-  b.className = 'bar';
-  b.style.cssText = `
-    --h:${6 + Math.random() * 16}px;
-    animation-duration:${0.5 + Math.random()*0.6}s;
-    animation-delay:${Math.random()*0.6}s;
-  `;
-  waveform.appendChild(b);
-}
+// ════ recording ════
+let mediaRecorder, chunks = [], audioBase64 = null, audioEl;
+let isRecording = false, isPlaying = false;
 
-// ── audio state ──
-let mediaRecorder, chunks = [], audioBlob, audioBase64 = null, audioEl;
-let isRecording = false;
-let isPlaying = false;
-
-const recBtn = document.getElementById('recBtn');
-const doneBtn = document.getElementById('doneBtn');
-const recStatus = document.getElementById('recStatus');
+const recBtn     = document.getElementById('recBtn');
+const doneBtn    = document.getElementById('doneBtn');
+const recStatus  = document.getElementById('recStatus');
 const recordScreen = document.getElementById('record-screen');
 const playerScreen = document.getElementById('player-screen');
 
-// ── recording ──
 recBtn.addEventListener('click', async () => {
   if (!isRecording) {
     try {
@@ -736,17 +355,16 @@ recBtn.addEventListener('click', async () => {
       mediaRecorder = new MediaRecorder(stream);
       mediaRecorder.ondataavailable = e => chunks.push(e.data);
       mediaRecorder.onstop = () => {
-        audioBlob = new Blob(chunks, { type: 'audio/webm' });
-        // convert to base64 so we can bake it into the HTML
-        const reader = new FileReader();
-        reader.onload = () => {
-          audioBase64 = reader.result; // data:audio/webm;base64,...
+        const blob = new Blob(chunks, { type: 'audio/webm' });
+        const fr = new FileReader();
+        fr.onload = () => {
+          audioBase64 = fr.result;
           audioEl = new Audio(audioBase64);
-          audioEl.addEventListener('ended', stopPlaying);
+          audioEl.addEventListener('ended', onEnded);
           doneBtn.classList.add('visible');
-          recStatus.textContent = 'recording saved ✓ — tap again to re-record';
+          recStatus.textContent = 'saved ✓  — tap to re-record';
         };
-        reader.readAsDataURL(audioBlob);
+        fr.readAsDataURL(blob);
       };
       mediaRecorder.start();
       isRecording = true;
@@ -755,7 +373,7 @@ recBtn.addEventListener('click', async () => {
       doneBtn.classList.remove('visible');
       audioBase64 = null;
     } catch(e) {
-      recStatus.textContent = 'microphone access needed — allow mic in browser settings';
+      recStatus.textContent = 'allow microphone access and try again';
     }
   } else {
     mediaRecorder.stop();
@@ -766,115 +384,211 @@ recBtn.addEventListener('click', async () => {
   }
 });
 
-// ── "wrap it up" → generate self-contained player HTML and download it ──
+// ════ seal + download ════
 doneBtn.addEventListener('click', () => {
   if (!audioBase64) return;
   doneBtn.textContent = 'wrapping …';
   doneBtn.disabled = true;
 
-  // grab the entire page HTML, strip the record screen, inject the audio
-  const playerHTML = buildPlayerHTML(audioBase64);
-  const blob = new Blob([playerHTML], { type: 'text/html' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'happy-birthday.html';
+  const html = buildPlayerHTML(audioBase64, musicboxB64 || '/image/musicbox(blank).png', dollB64 || '/image/dolls_1.png');
+  const a = Object.assign(document.createElement('a'), {
+    href: URL.createObjectURL(new Blob([html], { type: 'text/html' })),
+    download: 'happy-birthday-liliana.html'
+  });
   a.click();
-  URL.revokeObjectURL(url);
 
-  // also show the local preview
   setTimeout(() => {
-    doneBtn.textContent = 'wrap it up →';
+    doneBtn.textContent = 'seal it with a bow →';
     doneBtn.disabled = false;
     recordScreen.style.display = 'none';
     playerScreen.classList.add('visible');
-  }, 400);
+    if (audioEl) { audioEl.pause(); audioEl.currentTime = 0; }
+  }, 500);
 });
 
-function buildPlayerHTML(b64audio) {
-  // clone current document, remove record screen, bake in audio
-  const clone = document.documentElement.cloneNode(true);
-  clone.querySelector('#record-screen').remove();
-  const ps = clone.querySelector('#player-screen');
-  ps.classList.add('visible');
-  ps.style.display = 'flex';
-  // inject audio as a script var
-  const script = clone.querySelector('script');
-  // prepend audio data and skip-record boot
-  const boot = document.createElement('script');
-  boot.textContent = `
-    window.__AUDIO_B64__ = ${JSON.stringify(b64audio)};
-  `;
-  clone.querySelector('head').appendChild(boot);
-  // patch the inline script: replace startWinding guard to use __AUDIO_B64__
-  return '<!DOCTYPE html>\n' + clone.outerHTML;
-}
+// ════ player controls ════
+const turntable  = document.getElementById('turntable');
+const windBtn    = document.getElementById('windBtn');
+const windHint   = document.getElementById('windHint');
+const waveDots   = document.getElementById('waveDots');
+const endedMsg   = document.getElementById('endedMsg');
 
-// ── winding / playback ──
-const windBtn = document.getElementById('windBtn');
-const globeWrap = document.getElementById('globeWrap');
-const base = document.getElementById('base');
-const hint = document.getElementById('hint');
-const windInstruction = document.getElementById('windInstruction');
-let windInterval;
-let keyAngle = 0;
+// boot with baked audio
+if (window.__AUDIO_B64__) {
+  audioEl = new Audio(window.__AUDIO_B64__);
+  audioEl.addEventListener('ended', onEnded);
+}
 
 function startWinding() {
   if (!audioEl) return;
-  hint.classList.add('hide');
-  windInstruction.classList.add('hide');
-
-  if (audioEl.ended) { audioEl.currentTime = 0; }
+  windHint.classList.add('hide');
+  endedMsg.classList.remove('show');
+  if (audioEl.ended) audioEl.currentTime = 0;
   audioEl.play();
   isPlaying = true;
-
-  globeWrap.classList.add('playing');
-  base.classList.add('playing');
-
-  // spin key
-  windInterval = setInterval(() => {
-    keyAngle += 15;
-    windBtn.style.transform = `rotate(${keyAngle}deg)`;
-  }, 30);
+  turntable.classList.add('spinning');
+  waveDots.classList.add('show');
+  windBtn.classList.add('active');
 }
 
 function stopWinding() {
-  if (!audioEl) return;
+  if (!audioEl || !isPlaying) return;
   audioEl.pause();
   isPlaying = false;
-  globeWrap.classList.remove('playing');
-  base.classList.remove('playing');
-  clearInterval(windInterval);
-  windInstruction.classList.remove('hide');
+  turntable.classList.remove('spinning');
+  waveDots.classList.remove('show');
+  windBtn.classList.remove('active');
+  windHint.classList.remove('hide');
 }
 
-function stopPlaying() {
+function onEnded() {
   isPlaying = false;
-  globeWrap.classList.remove('playing');
-  base.classList.remove('playing');
-  clearInterval(windInterval);
-  windInstruction.classList.remove('hide');
+  turntable.classList.remove('spinning');
+  waveDots.classList.remove('show');
+  windBtn.classList.remove('active');
+  windHint.classList.add('hide');
+  endedMsg.classList.add('show');
 }
 
-// ── if baked audio present (shared player file), boot directly into player ──
-if (window.__AUDIO_B64__) {
-  audioEl = new Audio(window.__AUDIO_B64__);
-  audioEl.addEventListener('ended', stopPlaying);
-  if (document.getElementById('record-screen')) {
-    document.getElementById('record-screen').style.display = 'none';
-  }
-  const ps = document.getElementById('player-screen');
-  if (ps) { ps.classList.add('visible'); ps.style.display = 'flex'; }
-}
-
-// mouse
 windBtn.addEventListener('mousedown', e => { e.preventDefault(); startWinding(); });
-window.addEventListener('mouseup', () => { if (isPlaying) stopWinding(); });
-
-// touch
+window.addEventListener('mouseup', () => stopWinding());
 windBtn.addEventListener('touchstart', e => { e.preventDefault(); startWinding(); }, { passive: false });
-window.addEventListener('touchend', () => { if (isPlaying) stopWinding(); });
+window.addEventListener('touchend', () => stopWinding());
+window.addEventListener('touchcancel', () => stopWinding());
 
+// ════ build self-contained player HTML ════
+function buildPlayerHTML(audiob64, musicboxSrc, dollSrc) {
+  const musicboxAttr = musicboxSrc.startsWith('data:') ? musicboxSrc : musicboxSrc;
+  const dollAttr     = dollSrc.startsWith('data:')     ? dollSrc     : dollSrc;
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday 🎀</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,400&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    overflow: hidden; user-select: none;
+    background: radial-gradient(ellipse at 50% 0%, #f5e8d8 0%, #e8d0b8 50%, #d4b89a 100%);
+  }
+  body::after {
+    content: ''; position: fixed; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse at 50% 50%, transparent 40%, rgba(80,40,10,0.18) 100%);
+  }
+  .player-label-top {
+    font-family: 'Playfair Display', serif; font-style: italic;
+    font-size: 18px; color: #6a3a18; letter-spacing: 0.5px;
+    margin-bottom: 16px; opacity: 0.85;
+  }
+  .box-stage { position: relative; width: min(420px, 92vw); }
+  .box-img { width: 100%; display: block; filter: drop-shadow(0 16px 40px rgba(80,40,10,0.3)); border-radius: 4px; }
+  .turntable-wrap {
+    position: absolute;
+    left: 34%; top: 46%;
+    width: 32%;
+    transform: translateX(-50%);
+    transform-origin: bottom center;
+    display: flex; align-items: flex-end; justify-content: center;
+  }
+  .doll-img { width: 100%; filter: drop-shadow(0 4px 12px rgba(80,40,10,0.25)); transform-origin: bottom center; }
+  .turntable-wrap.spinning { animation: turntable-spin 4s linear infinite; }
+  @keyframes turntable-spin {
+    0%   { transform: translateX(-50%) perspective(300px) rotateY(0deg); }
+    100% { transform: translateX(-50%) perspective(300px) rotateY(360deg); }
+  }
+  .key-hit-area {
+    position: absolute; right: 0%; top: 48%; width: 14%; height: 18%;
+    cursor: pointer; border-radius: 50%;
+  }
+  .key-hit-area.active::after {
+    content: ''; position: absolute; inset: -4px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(220,180,80,0.35) 0%, transparent 70%);
+    animation: keyglow 0.5s ease-in-out infinite alternate;
+  }
+  @keyframes keyglow { from{opacity:.5;transform:scale(.95)} to{opacity:1;transform:scale(1.05)} }
+  .wind-hint {
+    margin-top: 14px; font-size: 14px; font-style: italic;
+    color: #8a5a34; letter-spacing: 1px; text-align: center; transition: opacity 0.6s;
+  }
+  .wind-hint.hide { opacity: 0; }
+  .wave-dots { display: flex; gap: 5px; align-items: center; margin-top: 10px; height: 20px; opacity: 0; transition: opacity 0.3s; }
+  .wave-dots.show { opacity: 1; }
+  .wave-dots span { width: 4px; background: #9a5a2a; border-radius: 3px; animation: wavebar 0.7s ease-in-out infinite alternate; }
+  @keyframes wavebar { from{height:4px} to{height:var(--h,16px)} }
+  .ended-msg { font-style: italic; color: #7a4a28; font-size: 14px; margin-top: 10px; opacity: 0; transition: opacity 0.6s; text-align: center; }
+  .ended-msg.show { opacity: 1; }
+</style>
+</head>
+<body>
+<div class="player-label-top">a little something for you 🎀</div>
+<div class="box-stage">
+  <img class="box-img" src="${musicboxAttr}" alt="music box"/>
+  <div class="turntable-wrap" id="turntable">
+    <img class="doll-img" src="${dollAttr}" alt=""/>
+  </div>
+  <div class="key-hit-area" id="windBtn"></div>
+</div>
+<div class="wind-hint" id="windHint">hold the key to play ✦</div>
+<div class="wave-dots" id="waveDots">
+  <span style="--h:8px;animation-delay:0s"></span>
+  <span style="--h:16px;animation-delay:0.1s"></span>
+  <span style="--h:12px;animation-delay:0.2s"></span>
+  <span style="--h:18px;animation-delay:0.05s"></span>
+  <span style="--h:10px;animation-delay:0.15s"></span>
+  <span style="--h:14px;animation-delay:0.25s"></span>
+  <span style="--h:8px;animation-delay:0.35s"></span>
+</div>
+<div class="ended-msg" id="endedMsg">wind again to replay ↺</div>
+<script>
+const audioEl = new Audio(${JSON.stringify(audiob64)});
+const turntable = document.getElementById('turntable');
+const windBtn   = document.getElementById('windBtn');
+const windHint  = document.getElementById('windHint');
+const waveDots  = document.getElementById('waveDots');
+const endedMsg  = document.getElementById('endedMsg');
+let isPlaying = false;
+audioEl.addEventListener('ended', () => {
+  isPlaying = false;
+  turntable.classList.remove('spinning');
+  waveDots.classList.remove('show');
+  windBtn.classList.remove('active');
+  windHint.classList.add('hide');
+  endedMsg.classList.add('show');
+});
+function startWinding() {
+  windHint.classList.add('hide');
+  endedMsg.classList.remove('show');
+  if (audioEl.ended) audioEl.currentTime = 0;
+  audioEl.play();
+  isPlaying = true;
+  turntable.classList.add('spinning');
+  waveDots.classList.add('show');
+  windBtn.classList.add('active');
+}
+function stopWinding() {
+  if (!isPlaying) return;
+  audioEl.pause(); isPlaying = false;
+  turntable.classList.remove('spinning');
+  waveDots.classList.remove('show');
+  windBtn.classList.remove('active');
+  windHint.classList.remove('hide');
+}
+windBtn.addEventListener('mousedown', e => { e.preventDefault(); startWinding(); });
+window.addEventListener('mouseup', stopWinding);
+windBtn.addEventListener('touchstart', e => { e.preventDefault(); startWinding(); }, { passive: false });
+window.addEventListener('touchend', stopWinding);
+window.addEventListener('touchcancel', stopWinding);
+<\/script>
+</body>
+</html>`;
+}
 </script>
 </body>
 </html>
