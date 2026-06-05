@@ -41,6 +41,7 @@
     position: relative;
     width: min(420px, 92vw);
     z-index: 10;
+    isolation: auto;
   }
 
   .box-img {
@@ -128,7 +129,7 @@
   <img class="box-img" src="/image/musicbox(blank).png" alt="music box"/>
 
   <div class="doll-video-wrap">
-    <video id="dollVideo" src="/video.mp4" loop muted playsinline preload="auto"></video>
+    <video id="dollVideo" src="/video.mp4" loop muted playsinline preload="auto" autoplay></video>
     <canvas id="dollCanvas"></canvas>
   </div>
 
@@ -202,7 +203,7 @@ windBtn.addEventListener('touchstart', e => { e.preventDefault(); startWinding()
 window.addEventListener('touchend', stopWinding);
 window.addEventListener('touchcancel', stopWinding);
 
-// ── canvas chroma key: removes black background from video ──
+// ── canvas white-key: removes white/near-white background ──
 (function() {
   const video  = document.getElementById('dollVideo');
   const canvas = document.getElementById('dollCanvas');
@@ -212,18 +213,24 @@ window.addEventListener('touchcancel', stopWinding);
   function keyFrame() {
     if (video.readyState < 2) { requestAnimationFrame(keyFrame); return; }
     const w = video.videoWidth, h = video.videoHeight;
-    if (w === 0) { requestAnimationFrame(keyFrame); return; }
+    if (!w) { requestAnimationFrame(keyFrame); return; }
     if (canvas.width !== w) { canvas.width = w; canvas.height = h; }
+
     ctx.drawImage(video, 0, 0, w, h);
     const img = ctx.getImageData(0, 0, w, h);
     const d = img.data;
-    const threshold = 40;
+
     for (let i = 0; i < d.length; i += 4) {
-      const brightness = (d[i] + d[i+1] + d[i+2]) / 3;
-      if (brightness < threshold) {
+      const r = d[i], g = d[i+1], b = d[i+2];
+      // white threshold: all channels high and close together
+      const isWhite = r > 220 && g > 220 && b > 220;
+      const isNearWhite = r > 200 && g > 200 && b > 200 && Math.max(r,g,b) - Math.min(r,g,b) < 30;
+      if (isWhite) {
         d[i+3] = 0;
-      } else if (brightness < threshold * 2.5) {
-        d[i+3] = Math.round(255 * (brightness - threshold) / (threshold * 1.5));
+      } else if (isNearWhite) {
+        // soft feather at edges
+        const whiteness = (Math.min(r,g,b) - 200) / 20;
+        d[i+3] = Math.round(255 * whiteness);
       }
     }
     ctx.putImageData(img, 0, 0);
