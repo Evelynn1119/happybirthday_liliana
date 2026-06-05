@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>A little something for you 🎀</title>
+<title>Happy Birthday Liliana 🎀</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,400&display=swap');
 
@@ -11,7 +11,6 @@
 
   body {
     min-height: 100vh;
-    background: #f0e0d0;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -19,118 +18,12 @@
     font-family: 'Cormorant Garamond', serif;
     overflow: hidden;
     user-select: none;
+    background: radial-gradient(ellipse at 50% 0%, #f5e8d8 0%, #e8d0b8 50%, #d4b89a 100%);
   }
-
-  /* ── warm studio gradient bg ── */
-  .bg {
-    position: fixed; inset: 0;
-    background:
-      radial-gradient(ellipse at 50% 0%, #f5e8d8 0%, #e8d0b8 50%, #d4b89a 100%);
-    z-index: 0;
-  }
-  /* subtle vignette */
-  .bg::after {
-    content: '';
-    position: absolute; inset: 0;
+  body::after {
+    content: ''; position: fixed; inset: 0; pointer-events: none;
     background: radial-gradient(ellipse at 50% 50%, transparent 40%, rgba(80,40,10,0.18) 100%);
   }
-
-  /* ════════════ RECORD SCREEN ════════════ */
-  #record-screen {
-    position: relative; z-index: 10;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 18px;
-    padding: 32px 24px;
-  }
-  #record-screen h1 {
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
-    font-size: 24px;
-    color: #4a2e1a;
-    text-align: center;
-    line-height: 1.4;
-  }
-  #record-screen p {
-    font-size: 15px;
-    color: #7a5a40;
-    text-align: center;
-    max-width: 260px;
-    line-height: 1.7;
-    font-style: italic;
-  }
-
-  /* small music box preview on record screen */
-  .box-preview {
-    width: 180px;
-    opacity: 0.85;
-    margin: 4px 0;
-    filter: drop-shadow(0 8px 20px rgba(80,40,10,0.2));
-  }
-
-  .rec-btn {
-    width: 72px; height: 72px;
-    border-radius: 50%;
-    border: none;
-    background: radial-gradient(circle at 35% 35%, #d94040, #8b1a1a);
-    box-shadow:
-      0 0 0 5px rgba(180,80,60,0.15),
-      0 4px 18px rgba(160,40,20,0.35);
-    cursor: pointer;
-    position: relative;
-    transition: transform 0.1s;
-  }
-  .rec-btn:active { transform: scale(0.94); }
-  .rec-btn.recording { animation: recpulse 1s ease-in-out infinite; }
-  @keyframes recpulse {
-    0%,100% { box-shadow: 0 0 0 5px rgba(180,80,60,0.15), 0 4px 18px rgba(160,40,20,0.35); }
-    50%      { box-shadow: 0 0 0 14px rgba(180,80,60,0.08), 0 4px 26px rgba(160,40,20,0.5); }
-  }
-  .rec-btn .inner {
-    width: 28px; height: 28px;
-    background: white;
-    border-radius: 50%;
-    position: absolute; top:50%; left:50%;
-    transform: translate(-50%,-50%);
-    transition: border-radius 0.3s, width 0.3s, height 0.3s;
-  }
-  .rec-btn.recording .inner { border-radius: 4px; width: 24px; height: 24px; }
-
-  #recStatus {
-    font-size: 13px;
-    letter-spacing: 1.5px;
-    color: #9a6a40;
-    text-transform: uppercase;
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-  }
-
-  .done-btn {
-    display: none;
-    background: none;
-    border: 1px solid rgba(120,70,30,0.4);
-    color: #6a3a18;
-    padding: 10px 30px;
-    border-radius: 30px;
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
-    cursor: pointer;
-    font-size: 15px;
-    letter-spacing: 0.5px;
-    transition: all 0.2s;
-  }
-  .done-btn:hover { background: rgba(120,70,30,0.07); border-color: #6a3a18; }
-  .done-btn.visible { display: block; }
-
-  /* ════════════ PLAYER SCREEN ════════════ */
-  #player-screen {
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    position: relative; z-index: 10;
-  }
-  #player-screen.visible { display: flex; }
 
   .player-label-top {
     font-family: 'Playfair Display', serif;
@@ -140,15 +33,16 @@
     letter-spacing: 0.5px;
     margin-bottom: 16px;
     opacity: 0.85;
+    position: relative; z-index: 10;
   }
 
   /* ── music box stage ── */
   .box-stage {
     position: relative;
     width: min(420px, 92vw);
+    z-index: 10;
   }
 
-  /* the music box image fills the stage */
   .box-img {
     width: 100%;
     display: block;
@@ -156,23 +50,20 @@
     border-radius: 4px;
   }
 
-  /* ── doll video: sits on the pad inside the music box ── */
+  /* ── doll video inside the box ── */
   .doll-video-wrap {
     position: absolute;
     left: 50%;
-    bottom: 36%;
-    width: 46%;
+    bottom: 33%;
+    width: 34%;
     transform: translateX(-50%);
     z-index: 2;
     pointer-events: none;
   }
-  /* hidden source video */
   .doll-video-wrap video { display: none; }
-  /* canvas shows the keyed result */
   .doll-video-wrap canvas { width: 100%; display: block; }
 
-  /* ── invisible winding key hit area ── */
-  /* covers the key on the right side of the box */
+  /* ── winding key hit area ── */
   .key-hit-area {
     position: absolute;
     right: 0%;
@@ -181,10 +72,8 @@
     height: 18%;
     cursor: pointer;
     border-radius: 50%;
-    /* outline: 2px dashed red; */ /* debug - uncomment to see */
+    z-index: 5;
   }
-
-  /* key glow when active */
   .key-hit-area.active::after {
     content: '';
     position: absolute; inset: -4px;
@@ -197,7 +86,7 @@
     to   { opacity: 1;   transform: scale(1.05); }
   }
 
-  /* ── hint text below ── */
+  /* ── hint + wave dots ── */
   .wind-hint {
     margin-top: 14px;
     font-size: 14px;
@@ -206,217 +95,75 @@
     letter-spacing: 1px;
     text-align: center;
     transition: opacity 0.6s;
+    position: relative; z-index: 10;
   }
   .wind-hint.hide { opacity: 0; }
 
-  /* ── playing indicator: waveform dots ── */
   .wave-dots {
-    display: flex;
-    gap: 5px;
-    align-items: center;
-    margin-top: 10px;
-    height: 20px;
-    opacity: 0;
-    transition: opacity 0.3s;
+    display: flex; gap: 5px; align-items: center;
+    margin-top: 10px; height: 20px;
+    opacity: 0; transition: opacity 0.3s;
+    position: relative; z-index: 10;
   }
   .wave-dots.show { opacity: 1; }
   .wave-dots span {
-    width: 4px;
-    background: #9a5a2a;
-    border-radius: 3px;
+    width: 4px; background: #9a5a2a; border-radius: 3px;
     animation: wavebar 0.7s ease-in-out infinite alternate;
   }
-  @keyframes wavebar {
-    from { height: 4px; }
-    to   { height: var(--h, 16px); }
-  }
+  @keyframes wavebar { from { height: 4px; } to { height: var(--h, 16px); } }
 
-  /* ── "wound down" message ── */
   .ended-msg {
-    font-style: italic;
-    color: #7a4a28;
-    font-size: 14px;
-    margin-top: 10px;
-    opacity: 0;
-    transition: opacity 0.6s;
-    text-align: center;
+    font-style: italic; color: #7a4a28; font-size: 14px;
+    margin-top: 10px; opacity: 0; transition: opacity 0.6s; text-align: center;
+    position: relative; z-index: 10;
   }
   .ended-msg.show { opacity: 1; }
-
-  /* ── 3D doll stage (Three.js canvas) sits over the pad inside the box ── */
-  .doll-stage-3d {
-    position: absolute;
-    left: var(--ds-left, 49%);
-    bottom: var(--ds-bottom, 35%);
-    width: var(--ds-w, 54%);
-    height: var(--ds-h, 56%);
-    transform: translateX(-50%);
-    z-index: 2;
-    pointer-events: none;     /* clicks pass through to the box / key */
-  }
-  .doll-stage-3d canvas { display: block; width: 100%; height: 100%; }
 </style>
 </head>
 <body>
-<div class="bg"></div>
 
-<!-- ══════════════ RECORD SCREEN ══════════════ -->
-<div id="record-screen">
-  <h1>Leave her a little something</h1>
+<div class="player-label-top">a little something for you 🎀</div>
 
-  <!-- small preview of the music box -->
-  <img class="box-preview" id="boxPreview" src="/image/musicbox(blank).png" alt="music box"/>
+<div class="box-stage">
+  <img class="box-img" src="/image/musicbox(blank).png" alt="music box"/>
 
-  <p>Record your voice. She'll wind the music box to hear it.</p>
-
-  <button class="rec-btn" id="recBtn"><div class="inner"></div></button>
-  <p id="recStatus">tap to record</p>
-  <button class="done-btn" id="doneBtn">seal it with a bow →</button>
-</div>
-
-<!-- ══════════════ PLAYER SCREEN ══════════════ -->
-<div id="player-screen">
-  <div class="player-label-top">a little something for you 🎀</div>
-
-  <div class="box-stage">
-    <img class="box-img" id="boxImg" src="/image/musicbox(blank).png" alt="music box"/>
-
-    <!-- doll video — black bg removed via canvas chroma key -->
-    <div class="doll-video-wrap">
-      <video id="dollVideo" src="/video.mp4" loop muted playsinline preload="auto" crossorigin="anonymous"></video>
-      <canvas id="dollCanvas"></canvas>
-    </div>
-
-    <!-- invisible hit area over the winding key -->
-    <div class="key-hit-area" id="windBtn"></div>
+  <div class="doll-video-wrap">
+    <video id="dollVideo" src="/video.mp4" loop muted playsinline preload="auto"></video>
+    <canvas id="dollCanvas"></canvas>
   </div>
 
-  <div class="wind-hint" id="windHint">hold the key to play ✦</div>
-
-  <div class="wave-dots" id="waveDots">
-    <span style="--h:8px;  animation-delay:0s"></span>
-    <span style="--h:16px; animation-delay:0.1s"></span>
-    <span style="--h:12px; animation-delay:0.2s"></span>
-    <span style="--h:18px; animation-delay:0.05s"></span>
-    <span style="--h:10px; animation-delay:0.15s"></span>
-    <span style="--h:14px; animation-delay:0.25s"></span>
-    <span style="--h:8px;  animation-delay:0.35s"></span>
-  </div>
-
-  <div class="ended-msg" id="endedMsg">wind again to replay ↺</div>
+  <div class="key-hit-area" id="windBtn"></div>
 </div>
+
+<div class="wind-hint" id="windHint">hold the key to play ✦</div>
+
+<div class="wave-dots" id="waveDots">
+  <span style="--h:8px;  animation-delay:0s"></span>
+  <span style="--h:16px; animation-delay:0.1s"></span>
+  <span style="--h:12px; animation-delay:0.2s"></span>
+  <span style="--h:18px; animation-delay:0.05s"></span>
+  <span style="--h:10px; animation-delay:0.15s"></span>
+  <span style="--h:14px; animation-delay:0.25s"></span>
+  <span style="--h:8px;  animation-delay:0.35s"></span>
+</div>
+
+<div class="ended-msg" id="endedMsg">wind again to replay ↺</div>
 
 <script>
-// ════════════════════════════════════════════════
-// If this is a baked player file (sent to friend)
-// images & audio are already embedded via window.__*__
-// ════════════════════════════════════════════════
-if (window.__MUSICBOX_B64__) document.getElementById('boxImg').src = window.__MUSICBOX_B64__;
-if (window.__MUSICBOX_B64__) document.getElementById('boxPreview').src = window.__MUSICBOX_B64__;
-if (window.__DOLL_B64__)     document.querySelectorAll('.doll-src').forEach(el => el.src = window.__DOLL_B64__);
-if (window.__AUDIO_B64__) {
-  // boot straight to player
-  window.addEventListener('DOMContentLoaded', () => {}, { once: true });
-  document.getElementById('record-screen').style.display = 'none';
-  const ps = document.getElementById('player-screen');
-  ps.classList.add('visible');
-}
+// ── audio source — replace the src with your voice note URL or base64 ──
+// Leave as null if no audio yet; the box still looks pretty 🎀
+const AUDIO_SRC = null;
 
-// ════ load images as base64 (for embedding later) ════
-let musicboxB64 = '', dollB64 = '';
-(async () => {
-  const toB64 = url => fetch(url)
-    .then(r => r.blob())
-    .then(b => new Promise(res => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.readAsDataURL(b); }));
-  try {
-    [musicboxB64, dollB64] = await Promise.all([
-      toB64('/image/musicbox(blank).png'),
-      toB64('/image/dolls_1.png')
-    ]);
-  } catch(e) { /* images already served locally */ }
-})();
+const audioEl   = AUDIO_SRC ? new Audio(AUDIO_SRC) : null;
+const dollVideo = document.getElementById('dollVideo');
+const windBtn   = document.getElementById('windBtn');
+const windHint  = document.getElementById('windHint');
+const waveDots  = document.getElementById('waveDots');
+const endedMsg  = document.getElementById('endedMsg');
 
-// ════ recording ════
-let mediaRecorder, chunks = [], audioBase64 = null, audioEl;
-let isRecording = false, isPlaying = false;
+let isPlaying = false;
 
-const recBtn     = document.getElementById('recBtn');
-const doneBtn    = document.getElementById('doneBtn');
-const recStatus  = document.getElementById('recStatus');
-const recordScreen = document.getElementById('record-screen');
-const playerScreen = document.getElementById('player-screen');
-
-recBtn.addEventListener('click', async () => {
-  if (!isRecording) {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      chunks = [];
-      mediaRecorder = new MediaRecorder(stream);
-      mediaRecorder.ondataavailable = e => chunks.push(e.data);
-      mediaRecorder.onstop = () => {
-        const blob = new Blob(chunks, { type: 'audio/webm' });
-        const fr = new FileReader();
-        fr.onload = () => {
-          audioBase64 = fr.result;
-          audioEl = new Audio(audioBase64);
-          audioEl.addEventListener('ended', onEnded);
-          doneBtn.classList.add('visible');
-          recStatus.textContent = 'saved ✓  — tap to re-record';
-        };
-        fr.readAsDataURL(blob);
-      };
-      mediaRecorder.start();
-      isRecording = true;
-      recBtn.classList.add('recording');
-      recStatus.textContent = 'recording … tap to stop';
-      doneBtn.classList.remove('visible');
-      audioBase64 = null;
-    } catch(e) {
-      recStatus.textContent = 'allow microphone access and try again';
-    }
-  } else {
-    mediaRecorder.stop();
-    mediaRecorder.stream.getTracks().forEach(t => t.stop());
-    isRecording = false;
-    recBtn.classList.remove('recording');
-    recStatus.textContent = 'processing …';
-  }
-});
-
-// ════ seal + download ════
-doneBtn.addEventListener('click', () => {
-  if (!audioBase64) return;
-  doneBtn.textContent = 'wrapping …';
-  doneBtn.disabled = true;
-
-  const html = buildPlayerHTML(audioBase64, musicboxB64 || '/image/musicbox(blank).png', dollB64 || '/image/dolls_1.png');
-  const a = Object.assign(document.createElement('a'), {
-    href: URL.createObjectURL(new Blob([html], { type: 'text/html' })),
-    download: 'happy-birthday-liliana.html'
-  });
-  a.click();
-
-  setTimeout(() => {
-    doneBtn.textContent = 'seal it with a bow →';
-    doneBtn.disabled = false;
-    recordScreen.style.display = 'none';
-    playerScreen.classList.add('visible');
-    if (audioEl) { audioEl.pause(); audioEl.currentTime = 0; }
-  }, 500);
-});
-
-// ════ player controls ════
-const windBtn    = document.getElementById('windBtn');
-const windHint   = document.getElementById('windHint');
-const waveDots   = document.getElementById('waveDots');
-const endedMsg   = document.getElementById('endedMsg');
-const dollVideo  = document.getElementById('dollVideo');
-
-// boot with baked audio
-if (window.__AUDIO_B64__) {
-  audioEl = new Audio(window.__AUDIO_B64__);
-  audioEl.addEventListener('ended', onEnded);
-}
+if (audioEl) audioEl.addEventListener('ended', onEnded);
 
 function startWinding() {
   if (!audioEl) return;
@@ -424,16 +171,16 @@ function startWinding() {
   endedMsg.classList.remove('show');
   if (audioEl.ended) audioEl.currentTime = 0;
   audioEl.play();
-  if (dollVideo) dollVideo.play();
+  dollVideo.play();
   isPlaying = true;
   waveDots.classList.add('show');
   windBtn.classList.add('active');
 }
 
 function stopWinding() {
-  if (!audioEl || !isPlaying) return;
-  audioEl.pause();
-  if (dollVideo) dollVideo.pause();
+  if (!isPlaying) return;
+  if (audioEl) audioEl.pause();
+  dollVideo.pause();
   isPlaying = false;
   waveDots.classList.remove('show');
   windBtn.classList.remove('active');
@@ -442,7 +189,7 @@ function stopWinding() {
 
 function onEnded() {
   isPlaying = false;
-  if (dollVideo) { dollVideo.pause(); dollVideo.currentTime = 0; }
+  dollVideo.pause(); dollVideo.currentTime = 0;
   waveDots.classList.remove('show');
   windBtn.classList.remove('active');
   windHint.classList.add('hide');
@@ -450,10 +197,10 @@ function onEnded() {
 }
 
 windBtn.addEventListener('mousedown', e => { e.preventDefault(); startWinding(); });
-window.addEventListener('mouseup', () => stopWinding());
+window.addEventListener('mouseup', stopWinding);
 windBtn.addEventListener('touchstart', e => { e.preventDefault(); startWinding(); }, { passive: false });
-window.addEventListener('touchend', () => stopWinding());
-window.addEventListener('touchcancel', () => stopWinding());
+window.addEventListener('touchend', stopWinding);
+window.addEventListener('touchcancel', stopWinding);
 
 // ── canvas chroma key: removes black background from video ──
 (function() {
@@ -463,26 +210,19 @@ window.addEventListener('touchcancel', () => stopWinding());
   const ctx = canvas.getContext('2d', { willReadFrequently: true });
 
   function keyFrame() {
-    if (video.paused && video.currentTime === 0) { requestAnimationFrame(keyFrame); return; }
     if (video.readyState < 2) { requestAnimationFrame(keyFrame); return; }
-
     const w = video.videoWidth, h = video.videoHeight;
     if (w === 0) { requestAnimationFrame(keyFrame); return; }
-
     if (canvas.width !== w) { canvas.width = w; canvas.height = h; }
-
     ctx.drawImage(video, 0, 0, w, h);
     const img = ctx.getImageData(0, 0, w, h);
-    const d   = img.data;
-    const threshold = 40; // pixel brightness below this → transparent
-
+    const d = img.data;
+    const threshold = 40;
     for (let i = 0; i < d.length; i += 4) {
-      const r = d[i], g = d[i+1], b = d[i+2];
-      const brightness = (r + g + b) / 3;
+      const brightness = (d[i] + d[i+1] + d[i+2]) / 3;
       if (brightness < threshold) {
-        d[i+3] = 0; // fully transparent
+        d[i+3] = 0;
       } else if (brightness < threshold * 2.5) {
-        // soft feather at the edge
         d[i+3] = Math.round(255 * (brightness - threshold) / (threshold * 1.5));
       }
     }
@@ -491,343 +231,11 @@ window.addEventListener('touchcancel', () => stopWinding());
   }
 
   video.addEventListener('loadeddata', () => {
-    canvas.width  = video.videoWidth;
+    canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     requestAnimationFrame(keyFrame);
   });
-  // also kick off if already loaded
   if (video.readyState >= 2) requestAnimationFrame(keyFrame);
-})();
-
-// ════ build self-contained player HTML ════
-function buildPlayerHTML(audiob64, musicboxSrc, dollSrc) {
-  const musicboxAttr = musicboxSrc.startsWith('data:') ? musicboxSrc : musicboxSrc;
-  const dollAttr     = dollSrc.startsWith('data:')     ? dollSrc     : dollSrc;
-
-  return `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Happy Birthday 🎀</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,400&display=swap');
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    min-height: 100vh;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    font-family: 'Cormorant Garamond', serif;
-    overflow: hidden; user-select: none;
-    background: radial-gradient(ellipse at 50% 0%, #f5e8d8 0%, #e8d0b8 50%, #d4b89a 100%);
-  }
-  body::after {
-    content: ''; position: fixed; inset: 0; pointer-events: none;
-    background: radial-gradient(ellipse at 50% 50%, transparent 40%, rgba(80,40,10,0.18) 100%);
-  }
-  .player-label-top {
-    font-family: 'Playfair Display', serif; font-style: italic;
-    font-size: 18px; color: #6a3a18; letter-spacing: 0.5px;
-    margin-bottom: 16px; opacity: 0.85;
-  }
-  .box-stage { position: relative; width: min(420px, 92vw); }
-  .box-img { width: 100%; display: block; filter: drop-shadow(0 16px 40px rgba(80,40,10,0.3)); border-radius: 4px; }
-  .turntable-wrap {
-    position: absolute;
-    left: 34%; top: 46%;
-    width: 32%;
-    transform: translateX(-50%);
-    transform-origin: bottom center;
-    display: flex; align-items: flex-end; justify-content: center;
-  }
-  .doll-img { width: 100%; filter: drop-shadow(0 4px 12px rgba(80,40,10,0.25)); transform-origin: bottom center; }
-  .turntable-wrap.spinning { animation: turntable-spin 4s linear infinite; }
-  @keyframes turntable-spin {
-    0%   { transform: translateX(-50%) perspective(300px) rotateY(0deg); }
-    100% { transform: translateX(-50%) perspective(300px) rotateY(360deg); }
-  }
-  .key-hit-area {
-    position: absolute; right: 0%; top: 48%; width: 14%; height: 18%;
-    cursor: pointer; border-radius: 50%;
-  }
-  .key-hit-area.active::after {
-    content: ''; position: absolute; inset: -4px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(220,180,80,0.35) 0%, transparent 70%);
-    animation: keyglow 0.5s ease-in-out infinite alternate;
-  }
-  @keyframes keyglow { from{opacity:.5;transform:scale(.95)} to{opacity:1;transform:scale(1.05)} }
-  .wind-hint {
-    margin-top: 14px; font-size: 14px; font-style: italic;
-    color: #8a5a34; letter-spacing: 1px; text-align: center; transition: opacity 0.6s;
-  }
-  .wind-hint.hide { opacity: 0; }
-  .wave-dots { display: flex; gap: 5px; align-items: center; margin-top: 10px; height: 20px; opacity: 0; transition: opacity 0.3s; }
-  .wave-dots.show { opacity: 1; }
-  .wave-dots span { width: 4px; background: #9a5a2a; border-radius: 3px; animation: wavebar 0.7s ease-in-out infinite alternate; }
-  @keyframes wavebar { from{height:4px} to{height:var(--h,16px)} }
-  .ended-msg { font-style: italic; color: #7a4a28; font-size: 14px; margin-top: 10px; opacity: 0; transition: opacity 0.6s; text-align: center; }
-  .ended-msg.show { opacity: 1; }
-</style>
-</head>
-<body>
-<div class="player-label-top">a little something for you 🎀</div>
-<div class="box-stage">
-  <img class="box-img" src="${musicboxAttr}" alt="music box"/>
-  <div class="turntable-wrap" id="turntable">
-    <img class="doll-img" src="${dollAttr}" alt=""/>
-  </div>
-  <div class="key-hit-area" id="windBtn"></div>
-</div>
-<div class="wind-hint" id="windHint">hold the key to play ✦</div>
-<div class="wave-dots" id="waveDots">
-  <span style="--h:8px;animation-delay:0s"></span>
-  <span style="--h:16px;animation-delay:0.1s"></span>
-  <span style="--h:12px;animation-delay:0.2s"></span>
-  <span style="--h:18px;animation-delay:0.05s"></span>
-  <span style="--h:10px;animation-delay:0.15s"></span>
-  <span style="--h:14px;animation-delay:0.25s"></span>
-  <span style="--h:8px;animation-delay:0.35s"></span>
-</div>
-<div class="ended-msg" id="endedMsg">wind again to replay ↺</div>
-<script>
-const audioEl = new Audio(${JSON.stringify(audiob64)});
-const turntable = document.getElementById('turntable');
-const windBtn   = document.getElementById('windBtn');
-const windHint  = document.getElementById('windHint');
-const waveDots  = document.getElementById('waveDots');
-const endedMsg  = document.getElementById('endedMsg');
-let isPlaying = false;
-audioEl.addEventListener('ended', () => {
-  isPlaying = false;
-  turntable.classList.remove('spinning');
-  waveDots.classList.remove('show');
-  windBtn.classList.remove('active');
-  windHint.classList.add('hide');
-  endedMsg.classList.add('show');
-});
-function startWinding() {
-  windHint.classList.add('hide');
-  endedMsg.classList.remove('show');
-  if (audioEl.ended) audioEl.currentTime = 0;
-  audioEl.play();
-  isPlaying = true;
-  turntable.classList.add('spinning');
-  waveDots.classList.add('show');
-  windBtn.classList.add('active');
-}
-function stopWinding() {
-  if (!isPlaying) return;
-  audioEl.pause(); isPlaying = false;
-  turntable.classList.remove('spinning');
-  waveDots.classList.remove('show');
-  windBtn.classList.remove('active');
-  windHint.classList.remove('hide');
-}
-windBtn.addEventListener('mousedown', e => { e.preventDefault(); startWinding(); });
-window.addEventListener('mouseup', stopWinding);
-windBtn.addEventListener('touchstart', e => { e.preventDefault(); startWinding(); }, { passive: false });
-window.addEventListener('touchend', stopWinding);
-window.addEventListener('touchcancel', stopWinding);
-<\/script>
-</body>
-</html>`;
-}
-</script>
-
-<!-- ════════════════ 3D PORCELAIN FIGURES (Three.js) ════════════════ -->
-<script>
-(function(){
-  if (!window.THREE) { console.warn('Three.js not loaded'); return; }
-  const mount = document.getElementById('dollStage');
-  if (!mount) return;
-
-  const scene = new THREE.Scene();
-
-  // ── camera ──
-  const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 100);
-  camera.position.set(0, 1.95, 6.4);
-  camera.lookAt(0, 1.35, 0);
-
-  // ── renderer (transparent, composites over the box photo) ──
-  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-  renderer.setClearColor(0x000000, 0);
-  renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
-  mount.appendChild(renderer.domElement);
-
-  // ── soft warm studio lighting for porcelain glaze ──
-  scene.add(new THREE.HemisphereLight(0xfff6e8, 0xcdb49a, 0.5));
-  const key = new THREE.DirectionalLight(0xfff2e0, 0.7);
-  key.position.set(3.5, 5, 4); scene.add(key);
-  const fill = new THREE.DirectionalLight(0xffe9d2, 0.3);
-  fill.position.set(-4, 2.5, 2.5); scene.add(fill);
-  const rim = new THREE.DirectionalLight(0xffffff, 0.45);
-  rim.position.set(-2.5, 3.5, -4); scene.add(rim);
-
-  // ── porcelain glaze material helper ──
-  function glaze(color, extra) {
-    return new THREE.MeshPhysicalMaterial(Object.assign({
-      color: color, roughness: 0.4, metalness: 0.0,
-      clearcoat: 0.85, clearcoatRoughness: 0.22, reflectivity: 0.4
-    }, extra || {}));
-  }
-
-  // palette
-  const C = {
-    skin: 0xeed3ba, hairBrown: 0x5e3d28, hairBlonde: 0xcea05c,
-    cami: 0xe6d8be, cardigan: 0x8ea6cf, topBlack: 0x20202a,
-    pants: 0xd8c9ab, jeans: 0x7e98c4, shoe: 0xeae2d4,
-    hat: 0xece0cc, bag: 0xd9c9ad, lip: 0xc07e72, cheek: 0xe39a8a, eye: 0x2e231c
-  };
-
-  // small builders
-  function cyl(mat, rT, rB, h, x, y, z, rz, openTheta) {
-    const g = openTheta
-      ? new THREE.CylinderGeometry(rT, rB, h, 24, 1, true, openTheta[0], openTheta[1])
-      : new THREE.CylinderGeometry(rT, rB, h, 24);
-    const m = new THREE.Mesh(g, mat);
-    m.position.set(x, y, z); if (rz) m.rotation.z = rz;
-    return m;
-  }
-  function ball(mat, r, x, y, z, sx, sy, sz) {
-    const m = new THREE.Mesh(new THREE.SphereGeometry(r, 24, 20), mat);
-    m.position.set(x, y, z);
-    if (sx!==undefined) m.scale.set(sx, sy, sz);
-    return m;
-  }
-  function box(mat, w, h, d, x, y, z) {
-    const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
-    m.position.set(x, y, z); return m;
-  }
-
-  // ── build one girl ──
-  function makeGirl(cfg) {
-    const G = new THREE.Group();
-    const skin = glaze(C.skin, { clearcoatRoughness: 0.3 });
-    const hairMat = glaze(cfg.hair, { roughness: 0.5, clearcoat: 0.5 });
-    const topMat = glaze(cfg.top);
-    const jacketMat = glaze(cfg.jacket);
-    const pantsMat = glaze(cfg.pants);
-    const shoeMat = glaze(C.shoe);
-
-    // shoes
-    G.add(box(shoeMat, 0.18, 0.09, 0.30, -0.12, 0.05, 0.03));
-    G.add(box(shoeMat, 0.18, 0.09, 0.30,  0.12, 0.05, 0.03));
-    // legs (wide-leg flare)
-    G.add(cyl(pantsMat, 0.12, 0.17, 0.95, -0.12, 0.57, 0));
-    G.add(cyl(pantsMat, 0.12, 0.17, 0.95,  0.12, 0.57, 0));
-    // hips
-    G.add(cyl(pantsMat, 0.18, 0.16, 0.20, 0, 1.07, 0));
-    // torso (top/cami)
-    G.add(cyl(topMat, 0.14, 0.18, 0.46, 0, 1.36, 0));
-    // open-front cardigan shell (gap faces camera +z)
-    const cardigan = cyl(jacketMat, 0.20, 0.22, 0.52, 0, 1.36, 0, 0, [2.15, 5.15]);
-    cardigan.scale.z = 0.88;
-    G.add(cardigan);
-    // neck + head
-    G.add(cyl(skin, 0.075, 0.085, 0.14, 0, 1.64, 0));
-    G.add(ball(skin, 0.225, 0, 1.87, 0));
-    // face: eyes, cheeks, lips
-    G.add(ball(glaze(C.eye,{clearcoat:0.3}), 0.028, -0.075, 1.89, 0.205));
-    G.add(ball(glaze(C.eye,{clearcoat:0.3}), 0.028,  0.075, 1.89, 0.205));
-    G.add(ball(glaze(C.cheek,{roughness:0.6,clearcoat:0.2}), 0.05, -0.13, 1.83, 0.17, 1, 0.7, 0.3));
-    G.add(ball(glaze(C.cheek,{roughness:0.6,clearcoat:0.2}), 0.05,  0.13, 1.83, 0.17, 1, 0.7, 0.3));
-    G.add(ball(glaze(C.lip,{roughness:0.5}), 0.045, 0, 1.79, 0.2, 1.3, 0.5, 0.5));
-    // hair: back cap + optional long side locks
-    const hairBack = ball(hairMat, 0.255, 0, 1.90, -0.05, 1, 1.08, 1.05);
-    G.add(hairBack);
-    // bangs / top hairline (covers crown, leaves face)
-    G.add(ball(hairMat, 0.235, 0, 1.97, 0.02, 1, 0.7, 1));
-    if (cfg.hairLong) {
-      G.add(cyl(hairMat, 0.09, 0.07, 0.7, -0.20, 1.55, -0.02));
-      G.add(cyl(hairMat, 0.09, 0.07, 0.7,  0.20, 1.55, -0.02));
-    }
-    if (cfg.curly) {
-      // a few curls
-      [[-0.22,1.62],[0.22,1.62],[-0.18,1.45],[0.18,1.45],[0,2.02]].forEach(p=>{
-        G.add(ball(hairMat, 0.085, p[0], p[1], -0.03));
-      });
-    }
-    // arms (sleeves = cardigan color), hands skin
-    if (cfg.raiseArm) {
-      // raised peace-sign arm (+x side)
-      const up = cyl(jacketMat, 0.06, 0.07, 0.5, 0.30, 1.78, 0.02, -0.55);
-      G.add(up);
-      G.add(ball(skin, 0.075, 0.40, 2.02, 0.04));
-      // other arm down
-      G.add(cyl(jacketMat, 0.06, 0.07, 0.5, -0.27, 1.35, 0.02, 0.18));
-      G.add(ball(skin, 0.07, -0.30, 1.10, 0.04));
-    } else {
-      G.add(cyl(jacketMat, 0.06, 0.07, 0.5,  0.27, 1.35, 0.02, -0.18));
-      G.add(ball(skin, 0.07,  0.30, 1.10, 0.04));
-      G.add(cyl(jacketMat, 0.06, 0.07, 0.5, -0.27, 1.35, 0.02, 0.18));
-      G.add(ball(skin, 0.07, -0.30, 1.10, 0.04));
-    }
-    // party hat
-    if (cfg.partyHat) {
-      const hat = new THREE.Mesh(new THREE.ConeGeometry(0.2, 0.42, 24), glaze(C.hat));
-      hat.position.set(0.02, 2.28, 0); hat.rotation.z = 0.08; G.add(hat);
-      G.add(ball(glaze(0xf0c0c8), 0.05, 0.03, 2.5, 0));
-    }
-    // handbag
-    if (cfg.bag) {
-      const b = box(glaze(C.bag), 0.2, 0.24, 0.1, 0.34, 1.2, 0.06);
-      G.add(b);
-    }
-    return G;
-  }
-
-  // ── turntable group (base + both girls) ──
-  const turntable = new THREE.Group();
-
-  const baseMat = glaze(0xf0e6d6, { clearcoat: 1, clearcoatRoughness: 0.15 });
-  const base = cyl(baseMat, 1.0, 1.06, 0.18, 0, -0.09, 0);
-  turntable.add(base);
-  const goldRim = new THREE.Mesh(
-    new THREE.TorusGeometry(0.99, 0.04, 16, 48),
-    new THREE.MeshStandardMaterial({ color: 0xC9A24B, metalness: 0.7, roughness: 0.3 })
-  );
-  goldRim.rotation.x = Math.PI/2; goldRim.position.y = 0.0; turntable.add(goldRim);
-
-  // girl A — brown long hair, cream cami + blue cardigan, cream pants, peace sign
-  const girlA = makeGirl({ hair: C.hairBrown, hairLong: true, top: C.cami,
-    jacket: C.cardigan, pants: C.pants, raiseArm: true });
-  girlA.position.set(-0.42, 0, 0.05); girlA.rotation.y = 0.2;
-  turntable.add(girlA);
-
-  // girl B — blonde curly, black top + cream cardigan, jeans, party hat, bag
-  const girlB = makeGirl({ hair: C.hairBlonde, curly: true, top: C.topBlack,
-    jacket: 0xede3d2, pants: C.jeans, partyHat: true, bag: true });
-  girlB.position.set(0.42, 0, -0.02); girlB.rotation.y = -0.2; girlB.scale.setScalar(0.97);
-  turntable.add(girlB);
-
-  turntable.scale.setScalar(0.9);
-  turntable.position.y = -0.05;
-  scene.add(turntable);
-
-  // ── render loop ──
-  let last = performance.now();
-  function resize() {
-    const w = mount.clientWidth, h = mount.clientHeight;
-    if (w === 0 || h === 0) return false;
-    if (renderer.domElement.width !== Math.floor(w * renderer.getPixelRatio()) ||
-        renderer.domElement.height !== Math.floor(h * renderer.getPixelRatio())) {
-      renderer.setSize(w, h, false);
-      camera.aspect = w / h; camera.updateProjectionMatrix();
-    }
-    return true;
-  }
-  function loop(now) {
-    requestAnimationFrame(loop);
-    const dt = Math.min(0.05, (now - last) / 1000); last = now;
-    if (!resize()) return;
-    if (window.__spinning3D) turntable.rotation.y += dt * 0.8;  // slow ~8s/turn
-    renderer.render(scene, camera);
-  }
-  requestAnimationFrame(loop);
-
-  // debug handles (harmless in production)
-  window.__tt = turntable;
-  window.__renderOnce = () => { resize(); renderer.render(scene, camera); };
 })();
 </script>
 </body>
