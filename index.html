@@ -156,34 +156,70 @@
     border-radius: 4px;
   }
 
-  /* doll sits on the turntable — positioned absolutely over the box */
-  .turntable-wrap {
+  /* ── turntable platform: positioned over the round pad inside the box ── */
+  .platform {
     position: absolute;
-    /* tuned to sit on the round platform inside the box */
-    left: 50%;
-    top: 38%;
-    width: 36%;
+    left: var(--pf-left, 50%);
+    bottom: var(--pf-bottom, 33%);
+    width: var(--pf-w, 30%);
     transform: translateX(-50%);
-    transform-origin: bottom center;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
+    perspective: 900px;            /* gives the 3D turn real depth */
   }
 
-  .doll-img {
+  /* contact shadow ellipse on the platform (static) */
+  .platform .contact-shadow {
+    position: absolute;
+    bottom: -4%;
+    left: 50%;
+    width: 76%;
+    height: 14%;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    background: radial-gradient(ellipse at 50% 50%, rgba(60,30,10,0.45) 0%, rgba(60,30,10,0.15) 55%, transparent 75%);
+    filter: blur(2px);
+    z-index: 1;
+  }
+
+  /* the rotating element — two faces pivot around the vertical axis */
+  .spinner {
+    position: relative;
     width: 100%;
-    filter: drop-shadow(0 4px 12px rgba(80,40,10,0.25));
-    transform-origin: bottom center;
-    /* perspective applied on parent */
+    transform-style: preserve-3d;
+    transform-origin: 50% 100%;   /* pivot at the feet */
+    z-index: 2;
+  }
+  .spinner.spinning {
+    animation: doll-spin 7s linear infinite;
+  }
+  @keyframes doll-spin {
+    from { transform: rotateY(0deg); }
+    to   { transform: rotateY(360deg); }
   }
 
-  /* turntable spin: rotates around Y axis = horizontal spin like a music box */
-  .turntable-wrap.spinning {
-    animation: turntable-spin 4s linear infinite;
+  /* each face is a flat billboard; backface hidden so only the
+     side currently facing us shows — front for 0–90/270–360, back for 90–270 */
+  .face {
+    width: 100%;
+    display: block;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
   }
-  @keyframes turntable-spin {
-    0%   { transform: translateX(-50%) perspective(300px) rotateY(0deg); }
-    100% { transform: translateX(-50%) perspective(300px) rotateY(360deg); }
+  .face img {
+    width: 100%;
+    display: block;
+    filter: drop-shadow(0 5px 10px rgba(80,40,10,0.3));
+  }
+  /* front face defines height */
+  .face.front { position: relative; transform: rotateY(0deg); }
+  /* back face overlaps, flipped + shadowed to read as the figurine's back */
+  .face.back {
+    position: absolute;
+    top: 0; left: 0;
+    transform: rotateY(180deg);
+  }
+  .face.back img {
+    transform: scaleX(-1);
+    filter: brightness(0.42) saturate(0.65) drop-shadow(0 5px 10px rgba(80,40,10,0.3));
   }
 
   /* ── invisible winding key hit area ── */
@@ -283,9 +319,13 @@
   <div class="box-stage">
     <img class="box-img" id="boxImg" src="/image/musicbox(blank).png" alt="music box"/>
 
-    <!-- doll on turntable -->
-    <div class="turntable-wrap" id="turntable">
-      <img class="doll-img" id="dollImg" src="/image/dolls_1.png" alt=""/>
+    <!-- doll on rotating turntable (two-faced 3D billboard) -->
+    <div class="platform">
+      <div class="contact-shadow"></div>
+      <div class="spinner" id="turntable">
+        <div class="face front"><img class="doll-src" src="/image/dolls_1.png" alt=""/></div>
+        <div class="face back"><img class="doll-src" src="/image/dolls_1.png" alt=""/></div>
+      </div>
     </div>
 
     <!-- invisible hit area over the winding key -->
@@ -314,7 +354,7 @@
 // ════════════════════════════════════════════════
 if (window.__MUSICBOX_B64__) document.getElementById('boxImg').src = window.__MUSICBOX_B64__;
 if (window.__MUSICBOX_B64__) document.getElementById('boxPreview').src = window.__MUSICBOX_B64__;
-if (window.__DOLL_B64__)     document.getElementById('dollImg').src  = window.__DOLL_B64__;
+if (window.__DOLL_B64__)     document.querySelectorAll('.doll-src').forEach(el => el.src = window.__DOLL_B64__);
 if (window.__AUDIO_B64__) {
   // boot straight to player
   window.addEventListener('DOMContentLoaded', () => {}, { once: true });
