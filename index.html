@@ -2,56 +2,59 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Happy Birthday Liliana 🎀</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,400&display=swap');
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+  html, body {
+    height: 100%;
+    overflow: hidden;
+  }
+
   body {
-    min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     font-family: 'Cormorant Garamond', serif;
-    overflow: hidden;
     user-select: none;
     background: radial-gradient(ellipse at 50% 0%, #f5e8d8 0%, #e8d0b8 50%, #d4b89a 100%);
   }
   body::after {
-    content: ''; position: fixed; inset: 0; pointer-events: none;
-    background: radial-gradient(ellipse at 50% 50%, transparent 40%, rgba(80,40,10,0.18) 100%);
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background: radial-gradient(ellipse at 50% 50%, transparent 40%, rgba(80,40,10,0.15) 100%);
   }
 
-  .player-label-top {
+  /* ── top label ── */
+  .top-label {
     font-family: 'Playfair Display', serif;
     font-style: italic;
-    font-size: 18px;
+    font-size: 16px;
     color: #6a3a18;
     letter-spacing: 0.5px;
-    margin-bottom: 16px;
+    padding: 14px 0 8px;
     opacity: 0.85;
     position: relative; z-index: 10;
+    flex-shrink: 0;
   }
 
-  /* ── music box stage ── */
+  /* ── music box ── */
   .box-stage {
     position: relative;
-    width: min(420px, 92vw);
+    width: min(360px, 88vw);
+    flex-shrink: 0;
     z-index: 10;
     isolation: auto;
   }
-
   .box-img {
-    width: 100%;
-    display: block;
-    filter: drop-shadow(0 16px 40px rgba(80,40,10,0.3));
+    width: 100%; display: block;
+    filter: drop-shadow(0 10px 28px rgba(80,40,10,0.28));
     border-radius: 4px;
   }
 
-  /* ── doll video inside the box ── */
+  /* ── doll video ── */
   .doll-video-wrap {
     position: absolute;
     left: 50%;
@@ -64,98 +67,182 @@
   .doll-video-wrap video { display: none; }
   .doll-video-wrap canvas { width: 100%; display: block; }
 
-  /* ── winding key hit area ── */
+  /* ── key hit area ── */
   .key-hit-area {
     position: absolute;
-    right: 0%;
-    top: 48%;
-    width: 14%;
-    height: 18%;
-    cursor: pointer;
-    border-radius: 50%;
-    z-index: 5;
+    right: 0%; top: 48%;
+    width: 16%; height: 20%;
+    cursor: pointer; border-radius: 50%; z-index: 5;
   }
   .key-hit-area.active::after {
     content: '';
-    position: absolute; inset: -4px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(220,180,80,0.35) 0%, transparent 70%);
+    position: absolute; inset: -6px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(220,180,80,0.4) 0%, transparent 70%);
     animation: keyglow 0.5s ease-in-out infinite alternate;
   }
   @keyframes keyglow {
-    from { opacity: 0.5; transform: scale(0.95); }
-    to   { opacity: 1;   transform: scale(1.05); }
+    from { opacity: 0.5; transform: scale(0.93); }
+    to   { opacity: 1;   transform: scale(1.07); }
   }
 
-  /* ── hint + wave dots ── */
+  /* ── hint below box ── */
   .wind-hint {
-    margin-top: 14px;
-    font-size: 14px;
-    font-style: italic;
-    color: #8a5a34;
-    letter-spacing: 1px;
-    text-align: center;
-    transition: opacity 0.6s;
+    font-size: 13px; font-style: italic;
+    color: #8a5a34; letter-spacing: 1px;
+    text-align: center; transition: opacity 0.6s;
     position: relative; z-index: 10;
+    padding: 8px 0 4px;
+    flex-shrink: 0;
   }
   .wind-hint.hide { opacity: 0; }
 
+  /* ── wave dots ── */
   .wave-dots {
-    display: flex; gap: 5px; align-items: center;
-    margin-top: 10px; height: 20px;
-    opacity: 0; transition: opacity 0.3s;
+    display: flex; gap: 4px; align-items: center;
+    height: 18px; opacity: 0; transition: opacity 0.3s;
     position: relative; z-index: 10;
+    flex-shrink: 0; padding-bottom: 4px;
   }
   .wave-dots.show { opacity: 1; }
   .wave-dots span {
-    width: 4px; background: #9a5a2a; border-radius: 3px;
+    width: 3px; background: #9a5a2a; border-radius: 3px;
     animation: wavebar 0.7s ease-in-out infinite alternate;
   }
-  @keyframes wavebar { from { height: 4px; } to { height: var(--h, 16px); } }
+  @keyframes wavebar { from { height: 3px; } to { height: var(--h, 14px); } }
 
-  .ended-msg {
-    font-style: italic; color: #7a4a28; font-size: 14px;
-    margin-top: 10px; opacity: 0; transition: opacity 0.6s; text-align: center;
+  /* ── letter / caption area ── */
+  .letter-wrap {
+    flex: 1;
+    width: min(360px, 88vw);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 8px 4px 40px;
     position: relative; z-index: 10;
+    /* hide scrollbar */
+    scrollbar-width: none;
+  }
+  .letter-wrap::-webkit-scrollbar { display: none; }
+
+  .letter-line {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 15px;
+    line-height: 1.75;
+    color: #4a2e1a;
+    text-align: center;
+    margin-bottom: 10px;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .letter-line.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .letter-line.current {
+    color: #2a1208;
+    font-size: 16px;
+  }
+  .letter-line.dear {
+    font-size: 20px;
+    color: #6a3a18;
+    margin-bottom: 14px;
+    letter-spacing: 0.5px;
+  }
+  .letter-line.closing {
+    margin-top: 8px;
+    color: #6a3a18;
+    font-size: 16px;
+  }
+
+  /* ended replay */
+  .ended-msg {
+    font-style: italic; color: #7a4a28; font-size: 13px;
+    opacity: 0; transition: opacity 0.6s; text-align: center;
+    position: relative; z-index: 10; flex-shrink: 0; padding: 4px 0 8px;
   }
   .ended-msg.show { opacity: 1; }
 </style>
 </head>
 <body>
 
-<div class="player-label-top">a little something for you 🎀</div>
+<div class="top-label">a little something for you 🎀</div>
 
 <div class="box-stage">
   <img class="box-img" src="/image/musicbox(blank).png" alt="music box"/>
-
   <div class="doll-video-wrap">
     <video id="dollVideo" src="/video.mp4" loop muted playsinline preload="auto" autoplay></video>
     <canvas id="dollCanvas"></canvas>
   </div>
-
   <div class="key-hit-area" id="windBtn"></div>
 </div>
 
 <div class="wind-hint" id="windHint">hold the key to play ✦</div>
-
 <div class="wave-dots" id="waveDots">
   <span style="--h:8px;  animation-delay:0s"></span>
-  <span style="--h:16px; animation-delay:0.1s"></span>
-  <span style="--h:12px; animation-delay:0.2s"></span>
-  <span style="--h:18px; animation-delay:0.05s"></span>
-  <span style="--h:10px; animation-delay:0.15s"></span>
-  <span style="--h:14px; animation-delay:0.25s"></span>
-  <span style="--h:8px;  animation-delay:0.35s"></span>
+  <span style="--h:14px; animation-delay:0.1s"></span>
+  <span style="--h:11px; animation-delay:0.2s"></span>
+  <span style="--h:16px; animation-delay:0.05s"></span>
+  <span style="--h:9px;  animation-delay:0.15s"></span>
+  <span style="--h:13px; animation-delay:0.25s"></span>
+  <span style="--h:7px;  animation-delay:0.35s"></span>
 </div>
-
 <div class="ended-msg" id="endedMsg">wind again to replay ↺</div>
 
-<script>
-// ── audio source — replace the src with your voice note URL or base64 ──
-// Leave as null if no audio yet; the box still looks pretty 🎀
-const AUDIO_SRC = '/voicenote.m4a';
+<!-- letter captions -->
+<div class="letter-wrap" id="letterWrap">
+  <!-- lines injected by JS -->
+</div>
 
-const audioEl   = AUDIO_SRC ? new Audio(AUDIO_SRC) : null;
+<script>
+// ── caption cues (time in seconds, estimated from ~76s total audio) ──
+// Adjust the `t` values if the timing is off
+const CUES = [
+  { t: 0,    text: "Dear Liliana,",                                                                    cls: "dear" },
+  { t: 2,    text: "It's really, really nice to be your best friend." },
+  { t: 7,    text: "First of all, I miss you so much." },
+  { t: 11,   text: "I can't believe how fast time has passed." },
+  { t: 15,   text: "I still remember the first day I met you outside the bathroom," },
+  { t: 19,   text: "and honestly, I really do consider you one of my best friends." },
+  { t: 24,   text: "I know long-distance friendships can be hard," },
+  { t: 28,   text: "but I hope you always know that I'll be here for you." },
+  { t: 33,   text: "No matter where we are or how much time passes," },
+  { t: 36,   text: "I'll always be cheering for you." },
+  { t: 39,   text: "I just want to say that I really, really love you," },
+  { t: 43,   text: "and I truly cherish you as a friend." },
+  { t: 46,   text: "You make my life ten times better," },
+  { t: 49,   text: "and I honestly can't imagine my life without you." },
+  { t: 53,   text: "When I was in New York, and even now," },
+  { t: 56,   text: "you've always been one of my closest friends." },
+  { t: 60,   text: "I want you to be at my wedding." },
+  { t: 63,   text: "I want you to be one of my bridesmaids." },
+  { t: 66,   text: "I want you to be part of every important chapter in my life." },
+  { t: 71,   text: "I'm getting emotional saying this, but I just really miss you." },
+  { t: 76,   text: "You are such a caring, loyal, and strong person." },
+  { t: 80,   text: "You always show up for the people you love," },
+  { t: 83,   text: "and I adore that about you so much." },
+  { t: 87,   text: "I'm so proud of you —" },
+  { t: 89,   text: "for buying a house, building your life, and becoming the person you are." },
+  { t: 95,   text: "Please never stop updating me on your crazy stories and your life in New York" },
+  { t: 100,  text: "because it always makes me feel closer to you." },
+  { t: 105,  text: "Happy birthday, my love.",                                                         cls: "closing" },
+  { t: 108,  text: "I love you so much,",                                                             cls: "closing" },
+  { t: 111,  text: "and I wish you the best year ahead. 🎀",                                          cls: "closing" },
+];
+
+// ── build letter DOM ──
+const wrap = document.getElementById('letterWrap');
+CUES.forEach((cue, i) => {
+  const el = document.createElement('div');
+  el.className = 'letter-line' + (cue.cls ? ' ' + cue.cls : '');
+  el.id = 'cue-' + i;
+  el.textContent = cue.text;
+  wrap.appendChild(el);
+});
+
+// ── audio ──
+const AUDIO_SRC = '/voicenote.m4a';
+const audioEl  = new Audio(AUDIO_SRC);
 const dollVideo = document.getElementById('dollVideo');
 const windBtn   = document.getElementById('windBtn');
 const windHint  = document.getElementById('windHint');
@@ -163,14 +250,42 @@ const waveDots  = document.getElementById('waveDots');
 const endedMsg  = document.getElementById('endedMsg');
 
 let isPlaying = false;
+let lastCueIdx = -1;
 
-if (audioEl) audioEl.addEventListener('ended', onEnded);
+// ── timeupdate → show captions ──
+audioEl.addEventListener('timeupdate', () => {
+  const t = audioEl.currentTime;
+  let cur = -1;
+  for (let i = 0; i < CUES.length; i++) {
+    if (t >= CUES[i].t) cur = i;
+  }
+  if (cur === lastCueIdx) return;
+  lastCueIdx = cur;
+
+  // reveal all lines up to current
+  for (let i = 0; i <= cur; i++) {
+    const el = document.getElementById('cue-' + i);
+    if (!el) continue;
+    el.classList.add('visible');
+    el.classList.toggle('current', i === cur);
+  }
+  // remove current from previous
+  if (cur > 0) {
+    const prev = document.getElementById('cue-' + (cur - 1));
+    if (prev) prev.classList.remove('current');
+  }
+
+  // auto-scroll current line into view
+  const curEl = document.getElementById('cue-' + cur);
+  if (curEl) curEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+});
+
+audioEl.addEventListener('ended', onEnded);
 
 function startWinding() {
-  if (!audioEl) return;
   windHint.classList.add('hide');
   endedMsg.classList.remove('show');
-  if (audioEl.ended) audioEl.currentTime = 0;
+  if (audioEl.ended) { audioEl.currentTime = 0; lastCueIdx = -1; }
   audioEl.play();
   dollVideo.play();
   isPlaying = true;
@@ -180,7 +295,7 @@ function startWinding() {
 
 function stopWinding() {
   if (!isPlaying) return;
-  if (audioEl) audioEl.pause();
+  audioEl.pause();
   dollVideo.pause();
   isPlaying = false;
   waveDots.classList.remove('show');
@@ -203,7 +318,7 @@ windBtn.addEventListener('touchstart', e => { e.preventDefault(); startWinding()
 window.addEventListener('touchend', stopWinding);
 window.addEventListener('touchcancel', stopWinding);
 
-// ── canvas white-key: removes white/near-white background ──
+// ── canvas white-key chroma removal ──
 (function() {
   const video  = document.getElementById('dollVideo');
   const canvas = document.getElementById('dollCanvas');
@@ -215,19 +330,15 @@ window.addEventListener('touchcancel', stopWinding);
     const w = video.videoWidth, h = video.videoHeight;
     if (!w) { requestAnimationFrame(keyFrame); return; }
     if (canvas.width !== w) { canvas.width = w; canvas.height = h; }
-
     ctx.drawImage(video, 0, 0, w, h);
     const img = ctx.getImageData(0, 0, w, h);
     const d = img.data;
-
     for (let i = 0; i < d.length; i += 4) {
       const r = d[i], g = d[i+1], b = d[i+2];
       const lo = Math.min(r,g,b), hi = Math.max(r,g,b);
-      // only remove pixels that are near-pure white (all channels > 235, spread < 20)
       if (lo > 235 && hi - lo < 20) {
         d[i+3] = 0;
       } else if (lo > 218 && hi - lo < 25) {
-        // narrow feather zone at edges only
         d[i+3] = Math.round(255 * (lo - 218) / 17);
       }
     }
